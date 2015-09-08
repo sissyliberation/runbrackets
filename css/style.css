@@ -1,0 +1,15 @@
+.matches {
+	text-align: center;
+}
+
+.in_progress {
+	background: blue;
+}
+
+.open {
+
+}
+
+.pending {
+	background: #f3f3f3;
+}

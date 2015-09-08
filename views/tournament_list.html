@@ -1,0 +1,7 @@
+<div class="row">
+	<div class="col-sm-12" ng-repeat ="t in tournament_list">
+		{{ t.tournament.name }} {{t.tournament.state}} <a class="btn btn-primary" href="#/tournaments/{{t.tournament.url}}">Select Tournament</a>, <a class="btn btn-default" href="{{t.tournament.full_challonge_url}}">View in Challonge</a>
+	</div>
+
+
+</div>
