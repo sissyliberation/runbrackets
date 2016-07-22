@@ -1,0 +1,184 @@
+<div style="width: 100%;" ng-if="is_loading">
+  <div class="progress">
+    <div class="indeterminate"></div>
+  </div>
+</div>
+
+<div class="container" ng-if="!confirmed">
+  <form id="form-credentials">
+    <label for="api_key" class="sr-only">API Key</label>
+    <input ng-model="credentials.api_key" type="text" id="api_key" class="form-control" placeholder="API Key" required autofocus>
+    <label for="subdomain" class="sr-only">Subdomain</label>
+    <input ng-model="credentials.subdomain" type="text" id="subdomain" class="form-control" placeholder="Subdomain" required>
+    <p class="muted text-center">
+      Any information given is stored only in your browser (using localStorage), and nowhere else.
+    </p>
+    <div class="spaced text-center">
+      <button ng-disabled="!credentials.api_key" class="btn btn-lg btn-primary" ng-click="setCredentials();" >Let's Go</button>
+    </div>
+  </form>
+</div> 
+
+
+
+<div id="chooseTournament" class="container" ng-if="confirmed && !activeTournament">
+  <h1 class="text-center">Choose your Tournament</h1>
+
+  <div class="row">
+    <div class="col-sm-12 col-md-6 col-md-push-3">
+      <div ng-repeat="tournament in tournaments" class="tournament-list" ng-click="selectTournament(tournament);">
+        <h2 style="display:inline-block;">
+          {{tournament.tournament.name}}
+        </h2>
+
+        <a class="pull-right link" href="{{tournament.tournament.full_challonge_url}}" target="_blank">
+          <i class="fa fa-external-link-square" aria-hidden="true"></i>
+        </a> 
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+
+
+<div id="activeTournament" layout="column" flex ng-if="!is_loading && activeTournament">
+
+<md-content class="md-padding" flex layout="column" layout-align="center" >
+  <h1 class="text-center">
+    <a href="{{activeTournament.tournament.full_challonge_url}}" target="_blank">
+      {{activeTournament.tournament.name}}
+    </a>
+  </h1>
+  <div class="progress">
+    <div class="determinate" style="width: {{ activeTournament.tournament.progress_meter }}%"></div>
+  </div>
+
+</md-content>
+<md-content class="md-padding" layout="column" layout-align="center" ng-if="matches">
+  <div layout="row" layout-align="center center">
+    hide completed matches: 
+    <input type="checkbox" ng-model="credentials.hide_completed" ng-change="hideCompletedMatches()" class="ng-pristine ng-untouched ng-valid ng-empty">
+
+    <table id="matches-table" class="table table-hover" >
+      <thead >
+        <tr>
+          <th style="width: 20%;">
+            Match (round)
+          </th>
+          <th style="width: 30%;">
+            Player 1
+          </th>
+          <th style="width: 30%;">
+            Player 2
+          </th>
+          <th style="width: 20%;">
+            Station
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+
+        <tr ng-repeat-start="match in matches" ng-class="{'info': match.match.state=='open' && (match.match.underway_at || match.match.scores_csv), 'active': match.match.state=='open' && !match.match.underway_at, 'error': match.match.state=='pending', 'success': match.match.state=='complete'}" ng-hide="credentials.hide_completed && match.match.state=='complete'" ng-click="editMatch(match)">
+          <th scope="row">
+            {{match.match.identifier}} ({{ determineRound(match.match.round) }})
+          </th>
+          <td ng-class="{'bold':match.match.winner_id && match.match.winner_id == match.match.player1_id}">
+            <span class="player" ng-if="participants[match.match.player1_id]">
+              {{ participants[match.match.player1_id] }}
+            </span>
+             <span ng-if="!participants[match.match.player1_id]">
+              {{ 'Winner of ' + match_ids[match.match.player1_prereq_match_id] }}
+            </span>
+
+          
+          </td>
+          <td ng-class="{'bold':match.match.winner_id && match.match.winner_id == match.match.player2_id}">
+            <span class="player" ng-if="participants[match.match.player2_id]">
+              {{ participants[match.match.player2_id] }}
+            </span>
+             <span ng-if="!participants[match.match.player2_id]">
+              {{ 'Winner of ' + match_ids[match.match.player2_prereq_match_id] }}
+            </span>
+          <td>
+            <input placeholder="station" class="form-control" ng-model="match.match.station" ng-change="setStation(match.match.id, match.match.station)"/>
+          </td>
+        </tr>
+        <tr ng-repeat-end=''>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</md-content>
+</div>
+
+<div class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Modal title</h4>
+      </div>
+      <div class="modal-body">
+        <p>One fine body&hellip;</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+<!-- Button trigger modal -->
+<!-- <button type="button" class="btn btn-primary btn-lg">
+  Launch demo modal
+</button> -->
+
+<!-- Modal -->
+<div class="modal fade" id="matchModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Edit Match {{currentMatch.match.identifier}}</h4>
+      </div>
+      <div class="modal-body text-center" ng-if="(!currentMatch.match.underway_at && !currentMatch.match.scores_csv)">
+        <button class="btn btn-large btn-primary" ng-click="postMatchResults()">
+          Start Match
+        </button>
+       
+      </div>
+      <div class="modal-body" ng-if="currentMatch.match.underway_at || currentMatch.match.scores_csv">
+        <div class="winner text-center">
+          <h3>Select Winner</h3>
+          <div class="btn-group" role="group" aria-label="...">
+            <button type="button" class="btn btn-default" ng-class="{'btn-primary': currentMatch.match.winner_id == currentMatch.match.player1_id}" ng-click="currentMatch.match.winner_id=currentMatch.match.player1_id">{{participants[currentMatch.match.player1_id]}}</button>
+            <button type="button" class="btn btn-default" ng-class="{'btn-primary': currentMatch.match.winner_id == currentMatch.match.player2_id}" ng-click="currentMatch.match.winner_id=currentMatch.match.player2_id">{{participants[currentMatch.match.player2_id]}}</button>
+          </div>
+        </div>
+
+        <div class="scores">
+   
+          <div class="input-group spaced">
+            <span class="input-group-addon" id="basic-addon3">{{participants[currentMatch.match.player1_id]}}'s score</span>
+            <input ng-model="currentMatch.match.player1_score"  min="0"  type="number" class="form-control"  aria-describedby="{{participants[currentMatch.match.player1_id]}}'s score">
+          </div>
+
+          <div class="input-group spaced">
+            <span class="input-group-addon" id="basic-addon3">{{participants[currentMatch.match.player2_id]}}'s score</span>
+            <input ng-model="currentMatch.match.player2_score"  min="0"  type="number" class="form-control"  aria-describedby="{{participants[currentMatch.match.player2_id]}}'s score">
+          </div>
+
+        </div>
+       
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">nvm</button>
+        <button type="button" class="btn btn-primary" ng-click="postMatchResults()">Save</button>
+      </div>
+    </div>
+  </div>
+</div>

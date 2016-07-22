@@ -1,0 +1,257 @@
+[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+  display: none !important;
+}
+
+.text-center {
+  text-align: center;
+}
+
+body {
+  color: #2a2a2a;
+  font-weight: 300;
+}
+
+h1 {
+  font-weight: 300;
+  color: #2980b9;
+}
+
+h2 {
+  font-weight: 300;
+}
+
+a {
+  color: #2a2a2a;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+.bold {
+  font-weight: bold;
+}
+
+#landing {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+}
+
+#form-credentials {
+  padding: 15px;
+  position: absolute;
+  width: 50%;
+  min-width: 300px;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+}
+
+#form-credentials input {
+  margin-bottom: 15px;
+  height: 50px;
+}
+.spaced {
+  margin-top: 25px;
+}
+
+.tournament-list {
+  border-bottom: 1px solid #ccc;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.tournament-list:hover {
+  cursor: pointer;
+  color: #2980b9;
+}
+
+.tournament-list:last-child {
+  border-bottom: 0px;
+}
+
+.tournament-list .link {
+  margin-top: 20px;
+}
+
+.tournament-list h2 {
+  margin-top: 10px;
+}
+
+/*#navbar {
+  background-color: #2980b9;
+}*/
+/* Progress Bar */
+.progress {
+  position: relative;
+  height: 4px;
+  display: block;
+  width: 100%;
+  background-color: #bdc3c7;
+  border-radius: 2px;
+  background-clip: padding-box;
+  margin: 0.5rem 0 1rem 0;
+  overflow: hidden; }
+  .progress .determinate {
+    position: absolute;
+    background-color: inherit;
+    top: 0;
+    bottom: 0;
+    background-color: #2980b9;
+    transition: width .3s linear; }
+  .progress .indeterminate {
+    background-color: #2980b9; }
+    .progress .indeterminate:before {
+      content: '';
+      position: absolute;
+      background-color: inherit;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      will-change: left, right;
+      -webkit-animation: indeterminate 2.1s cubic-bezier(0.65, 0.815, 0.735, 0.395) infinite;
+              animation: indeterminate 2.1s cubic-bezier(0.65, 0.815, 0.735, 0.395) infinite; }
+    .progress .indeterminate:after {
+      content: '';
+      position: absolute;
+      background-color: inherit;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      will-change: left, right;
+      -webkit-animation: indeterminate-short 2.1s cubic-bezier(0.165, 0.84, 0.44, 1) infinite;
+              animation: indeterminate-short 2.1s cubic-bezier(0.165, 0.84, 0.44, 1) infinite;
+      -webkit-animation-delay: 1.15s;
+              animation-delay: 1.15s; }
+
+@-webkit-keyframes indeterminate {
+  0% {
+    left: -35%;
+    right: 100%; }
+  60% {
+    left: 100%;
+    right: -90%; }
+  100% {
+    left: 100%;
+    right: -90%; } }
+@keyframes indeterminate {
+  0% {
+    left: -35%;
+    right: 100%; }
+  60% {
+    left: 100%;
+    right: -90%; }
+  100% {
+    left: 100%;
+    right: -90%; } }
+@-webkit-keyframes indeterminate-short {
+  0% {
+    left: -200%;
+    right: 100%; }
+  60% {
+    left: 107%;
+    right: -8%; }
+  100% {
+    left: 107%;
+    right: -8%; } }
+@keyframes indeterminate-short {
+  0% {
+    left: -200%;
+    right: 100%; }
+  60% {
+    left: 107%;
+    right: -8%; }
+  100% {
+    left: 107%;
+    right: -8%; } }
+
+
+/* Matches */
+
+#matches-table {
+  vertical-align: center;
+}
+
+#matches-table tbody>tr:hover {
+  cursor: pointer;
+}
+
+#matches-table tbody>tr>td,
+#matches-table tbody>tr>th {
+ vertical-align: middle;
+}
+
+/*#matches-table tbody>tr>td>.player:hover {
+  color: #c0392b;
+  font-weight: bold;
+}*/
+
+  
+/*#matches-table thead {
+  background-color: #2980b9;
+  color: #fff;
+}
+
+#matches-table th {
+  font-weight: 300;
+  font-size: 20px;
+  padding: 10px;
+}
+
+#matches-table .station {
+  width: 100%;
+}
+
+#matches-table tbody tr {
+  border-bottom: 1px solid #bdc3c7;
+  margin: 5px;
+}
+
+#matches-table tbody td {
+  margin: 5px;
+  padding-left: 8px;
+  padding-right: 8px;
+}
+#matches-table .in-progress td {
+  background-color: #2980b9;
+  color: #fff;
+}
+
+#matches-table .pending td{
+  background-color: #ecf0f1;
+}
+
+#matches-table .open td{
+  background-color: #94c6e7;
+}
+
+#matches-table .complete td {
+  background-color: #ecf0f1;
+}
+*/
+/* Credentials */
+#credentials {
+
+}
+
+#credentials md-input-container {
+  width: 50%;
+}
+
+
+/* button */
+.md-button {
+  background: #2980b9!important;
+}
+
+#activeTournament {}
+
+#activeTournament h1 a {
+  color: #2980b9;
+
+}
