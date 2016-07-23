@@ -101,8 +101,8 @@
              <span ng-if="!participants[match.match.player2_id]">
               {{ 'Winner of ' + match_ids[match.match.player2_prereq_match_id] }}
             </span>
-          <td>
-            <input placeholder="station" class="form-control" ng-model="match.match.station" ng-change="setStation(match.match.id, match.match.station)"/>
+          <td >
+            <input ng-click="$event.stopPropagation()" placeholder="station" class="form-control" ng-model="match.match.station" ng-change="setStation(match.match.id, match.match.station)"/>
           </td>
         </tr>
         <tr ng-repeat-end=''>
