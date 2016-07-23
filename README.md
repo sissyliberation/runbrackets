@@ -33,6 +33,12 @@ Install all the dependencies.
 npm install
 ```
 
+Get the server up.
+
+```
+node server.js
+```
+
 Head on over to http://localhost:8080/#/ to see your local copy.
 
 ## Built With
