@@ -1,0 +1,28 @@
+.tournament-list {
+  border-bottom: 1px solid #ccc;
+  padding-left: 10px;
+  padding-right: 10px;
+
+  &:hover {
+    cursor: pointer;
+    color: $primary-color;
+  }
+
+  &:last-child {
+    border-bottom: 0px;
+  }
+
+  .link {
+    margin-top: 20px;
+  }
+  
+  h2 {
+    margin-top: 10px;
+  }
+}
+
+#activeTournament {
+  h1 a {
+    color: $primary-color;
+  }
+}

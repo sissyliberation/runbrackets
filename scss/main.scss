@@ -1,0 +1,84 @@
+@import "_bootstrap";
+@import "variables";
+@import "loading";
+@import "tournaments";
+@import "matches";
+@import "footer";
+
+[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+  display: none !important;
+}
+
+body {
+  color: $dark;
+  font-family: 'Raleway', sans-serif;
+}
+
+h1 {
+  color: $primary-color;
+}
+
+h2 {
+  font-weight: 100;
+}
+
+h1, h2, .navbar, .footer {
+  font-family: 'Fjalla One', sans-serif;
+}
+
+a {
+  color: $dark;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.bold {
+  font-weight: bold;
+}
+
+#landing {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+}
+
+#form-credentials {
+  padding: 15px;
+  position: absolute;
+  width: 50%;
+  min-width: 300px;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+
+  input {
+	  margin-bottom: 15px;
+	  height: 50px;
+	}
+}
+
+.spaced {
+  margin-top: 25px;
+}
+
+
+/*#navbar {
+  background-color: $primary-color;
+}*/
+/* Progress Bar */
+
+
+/* Credentials */
+#credentials {
+
+}
+
+#credentials md-input-container {
+  width: 50%;
+}
