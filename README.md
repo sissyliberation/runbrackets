@@ -24,7 +24,7 @@ You can run this locally, and are welcome to make changes.
 Fork this repository and go navigate to it.
 
 ```
-git clone https://github.com/novacourtois/challongeTO && ch challongeTO
+git clone https://github.com/novacourtois/challongeTO && cd challongeTO
 ```
 
 Install all the dependencies.
