@@ -126,7 +126,10 @@
 
         // store match ids to determine winner
         angular.forEach($scope.matches, function(value) {
-          $scope.match_ids[value.match.id] = value.match.identifier;
+          $scope.match_ids[value.match.id] = {
+            'id': value.match.identifier,
+            'round': value.match.round
+          };
           value.match.station = $scope.getStation(value.match.id);
         });
 

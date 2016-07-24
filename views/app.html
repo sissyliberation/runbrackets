@@ -88,18 +88,22 @@
             <span class="player" ng-if="participants[match.match.player1_id]">
               {{ participants[match.match.player1_id] }}
             </span>
-             <span ng-if="!participants[match.match.player1_id]">
-              {{ 'Winner of ' + match_ids[match.match.player1_prereq_match_id] }}
+            <span ng-if="!participants[match.match.player1_id] && match.match.round > match_ids[match.match.player1_prereq_match_id].round">
+              {{ 'Winner of ' + match_ids[match.match.player1_prereq_match_id].id }}
             </span>
-
-          
+            <span ng-if="!participants[match.match.player1id] && match.match.round < match_ids[match.match.player1_prereq_match_id].round">
+              {{ 'Loser of ' + match_ids[match.match.player1_prereq_match_id].id }}
+            </span>
           </td>
           <td ng-class="{'bold':match.match.winner_id && match.match.winner_id == match.match.player2_id}">
             <span class="player" ng-if="participants[match.match.player2_id]">
               {{ participants[match.match.player2_id] }}
             </span>
-             <span ng-if="!participants[match.match.player2_id]">
-              {{ 'Winner of ' + match_ids[match.match.player2_prereq_match_id] }}
+            <span ng-if="!participants[match.match.player2_id] && match.match.round > match_ids[match.match.player2_prereq_match_id].round">
+              {{ 'Winner of ' + match_ids[match.match.player2_prereq_match_id].id }}
+            </span>
+            <span ng-if="!participants[match.match.player2_id] && match.match.round < match_ids[match.match.player2_prereq_match_id].round">
+              {{ 'Loser of ' + match_ids[match.match.player2_prereq_match_id].id }}
             </span>
           <td >
             <input ng-click="$event.stopPropagation()" placeholder="station" class="form-control" ng-model="match.match.station" ng-change="setStation(match.match.id, match.match.station)"/>
