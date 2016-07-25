@@ -67,6 +67,7 @@
       })
       .success(function (data, status) {
         $scope.tournaments = data;
+        console.log($scope.tournaments);
         $scope.is_loading = false;
       })
       .error(function (data, status) {
@@ -76,9 +77,6 @@
 
     $scope.selectTournament = function(tournament) {
       $scope.activeTournament = tournament;
-      // console.log();
-      // console.log('active tournament:');
-      // console.log($scope.activeTournament);
       $scope.getTournamentParticipants();
     };
 
@@ -98,9 +96,6 @@
           $scope.participants[participants[i].participant.id] = participants[i].participant.name;
         }
 
-        // console.log();
-        // console.log('participants:')
-        // console.log($scope.participants);
         $scope.getTournamentMatches();
       })
       .error(function (data, status) {
@@ -111,7 +106,6 @@
     $scope.getTournamentMatches = function() {
       $scope.is_loading = true;
 
-      // https://api.challonge.com/v1/tournaments/{tournament}/matches.{json|xml}
       $http.get("getMatches/", {
         params: {
           "api_key" : $scope.credentials.api_key,
@@ -133,9 +127,6 @@
         });
 
         $scope.is_loading = false;
-        // console.log();
-        // console.log('matches:');
-        // console.log($scope.matches);
       })
       .error(function (data, status) {
        console.log(data);
@@ -149,7 +140,6 @@
         $scope.currentMatch = match;
         if($scope.currentMatch.match.scores_csv) {
           var scores = $scope.currentMatch.match.scores_csv.split('-');
-          // console.log(scores);
           $scope.currentMatch.match.player1_score = parseInt(scores[0]) || 0;
           $scope.currentMatch.match.player2_score = parseInt(scores[1]) || 0;
         }
@@ -174,7 +164,6 @@
       })
       .then(
        function(response){
-         // success callback
          $scope.setStation($scope.currentMatch.match.id, '');
          $scope.getTournamentMatches();
          $('#matchModal').modal('hide');
