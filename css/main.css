@@ -5995,7 +5995,7 @@ body {
 /* Custom page CSS
 -------------------------------------------------- */
 /* Not required for template or sticky footer method. */
-body > .container {
+body > #wrapper {
   padding: 60px 15px 0; }
 
 .container .text-muted {

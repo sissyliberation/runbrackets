@@ -18,7 +18,8 @@
     $scope.credentials = {
       'api_key': '',
       'subdomain': '',
-      'hide_completed': localStorageService.get('hide_completed')
+      'hide_completed': localStorageService.get('hide_completed'),
+      'hide_stations': localStorageService.get('hide_stations')
     };
 
     $scope.getCredentials = function(clicked) {
@@ -49,8 +50,10 @@
     };
 
     $scope.hideCompletedMatches = function() {
-      console.log($scope.credentials.hide_completed);
       localStorageService.set('hide_completed', $scope.credentials.hide_completed);
+    };
+    $scope.hideStations = function() {
+      localStorageService.set('hide_stations', $scope.credentials.hide_stations);
     };
 
     $scope.getActiveTournaments = function() {
@@ -63,12 +66,8 @@
         }
       })
       .success(function (data, status) {
-
         $scope.tournaments = data;
         $scope.is_loading = false;
-        // console.log();
-        // console.log('tournaments');
-        // console.log($scope.tournaments);
       })
       .error(function (data, status) {
         console.log(data);
