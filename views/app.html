@@ -8,8 +8,8 @@
   <form id="form-credentials">
     <label for="api_key" class="sr-only">API Key</label>
     <input ng-model="credentials.api_key" type="text" id="api_key" class="form-control" placeholder="API Key" required autofocus>
-   <!-- <label for="subdomain" class="sr-only">Subdomain</label>
-   <input ng-model="credentials.subdomain" type="text" id="subdomain" class="form-control" placeholder="Subdomain" required> -->
+    <label for="subdomain" class="sr-only">Subdomain</label>
+    <input ng-model="credentials.subdomain" type="text" id="subdomain" class="form-control" placeholder="Subdomain" required>
     <p class="muted text-center">
       Any information given is stored only in your browser (using localStorage), and nowhere else.
     </p>
@@ -41,46 +41,52 @@
 
 </div>
 
-
-
 <div id="activeTournament" layout="column" flex ng-if="!is_loading && activeTournament">
 
-<md-content class="md-padding" flex layout="column" layout-align="center" >
-  <h1 class="text-center">
-    <a href="{{activeTournament.tournament.full_challonge_url}}" target="_blank">
-      {{activeTournament.tournament.name}}
-    </a>
-  </h1>
-  <div class="progress">
-    <div class="determinate" style="width: {{ activeTournament.tournament.progress_meter }}%"></div>
+  <div>
+    <h1 class="text-center">
+      <a href="{{activeTournament.tournament.full_challonge_url}}" target="_blank">
+        {{activeTournament.tournament.name}}
+      </a>
+    </h1>
+    <div class="progress">
+      <div class="determinate" style="width: {{ activeTournament.tournament.progress_meter }}%"></div>
+    </div>
+
   </div>
 
-</md-content>
-<md-content class="md-padding" layout="column" layout-align="center" ng-if="matches">
-  <div layout="row" layout-align="center center">
-    hide completed matches: 
+  <div class="row">
+    <div class="col-sm-6">
+          hide completed matches: 
     <input type="checkbox" ng-model="credentials.hide_completed" ng-change="hideCompletedMatches()" class="ng-pristine ng-untouched ng-valid ng-empty">
+    </div>
+    <div class="col-sm-6 col-md-3 col-md-push-3">
+          hide stations: 
+    <input type="checkbox" ng-model="credentials.hide_stations" ng-change="hideStations()" class="ng-pristine ng-untouched ng-valid ng-empty">
+    </div>
+  </div>
 
+  <div layout="row">
     <table id="matches-table" class="table table-hover" >
       <thead >
         <tr>
           <th style="width: 20%;">
             Match (round)
           </th>
-          <th style="width: 30%;">
+          <th>
             Player 1
           </th>
-          <th style="width: 30%;">
+          <th>
             Player 2
           </th>
-          <th style="width: 20%;">
+          <th style="width: 20%;" ng-hide="credentials.hide_stations">
             Station
           </th>
         </tr>
       </thead>
       <tbody>
 
-        <tr ng-repeat-start="match in matches" ng-class="{'info': match.match.state=='open' && (match.match.underway_at || match.match.scores_csv), 'active': match.match.state=='open' && !match.match.underway_at, 'error': match.match.state=='pending', 'success': match.match.state=='complete'}" ng-hide="credentials.hide_completed && match.match.state=='complete'" ng-click="editMatch(match)">
+        <tr ng-repeat="match in matches" ng-class="{'info': match.match.state=='open' && (match.match.underway_at || match.match.scores_csv), 'active': match.match.state=='open' && !match.match.underway_at, 'error': match.match.state=='pending', 'success': match.match.state=='complete'}" ng-hide="credentials.hide_completed && match.match.state=='complete'" ng-click="editMatch(match)">
           <th scope="row">
             {{match.match.identifier}} ({{ determineRound(match.match.round) }})
           </th>
@@ -88,29 +94,31 @@
             <span class="player" ng-if="participants[match.match.player1_id]">
               {{ participants[match.match.player1_id] }}
             </span>
-             <span ng-if="!participants[match.match.player1_id]">
-              {{ 'Winner of ' + match_ids[match.match.player1_prereq_match_id] }}
+            <span ng-if="!participants[match.match.player1_id] && match.match.round > match_ids[match.match.player1_prereq_match_id].round">
+              {{ 'Winner of ' + match_ids[match.match.player1_prereq_match_id].id }}
             </span>
-
-          
+            <span ng-if="!participants[match.match.player1_id] && match.match.round < match_ids[match.match.player1_prereq_match_id].round">
+              {{ 'Loser of ' + match_ids[match.match.player1_prereq_match_id].id }}
+            </span>
           </td>
           <td ng-class="{'bold':match.match.winner_id && match.match.winner_id == match.match.player2_id}">
             <span class="player" ng-if="participants[match.match.player2_id]">
               {{ participants[match.match.player2_id] }}
             </span>
-             <span ng-if="!participants[match.match.player2_id]">
-              {{ 'Winner of ' + match_ids[match.match.player2_prereq_match_id] }}
+            <span ng-if="!participants[match.match.player2_id] && match.match.round > match_ids[match.match.player2_prereq_match_id].round">
+              {{ 'Winner of ' + match_ids[match.match.player2_prereq_match_id].id }}
             </span>
-          <td >
+            <span ng-if="!participants[match.match.player2_id] && match.match.round < match_ids[match.match.player2_prereq_match_id].round">
+              {{ 'Loser of ' + match_ids[match.match.player2_prereq_match_id].id }}
+            </span>
+          <td ng-hide="credentials.hide_stations"> 
             <input ng-click="$event.stopPropagation()" placeholder="station" class="form-control" ng-model="match.match.station" ng-change="setStation(match.match.id, match.match.station)"/>
           </td>
-        </tr>
-        <tr ng-repeat-end=''>
         </tr>
       </tbody>
     </table>
   </div>
-</md-content>
+
 </div>
 
 <div class="modal fade" tabindex="-1" role="dialog">
