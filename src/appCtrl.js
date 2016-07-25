@@ -15,11 +15,26 @@
     $scope.is_loading = true;
     $scope.ready = false;
 
+    $scope.tournamentFilters = [{
+      "name": "In Progress",
+      "value": "in_progress"
+    }, {
+      "name": "Completed",
+      "value": "ended"
+    }, {
+      "name": "Pending",
+      "value": "ended"
+    }, {
+      "name": "All",
+      "value": "all"
+    }];
+
     $scope.credentials = {
       'api_key': '',
       'subdomain': '',
       'hide_completed': localStorageService.get('hide_completed'),
-      'hide_stations': localStorageService.get('hide_stations')
+      'hide_stations': localStorageService.get('hide_stations'),
+      'tournament_filter': $scope.tournamentFilters[0]
     };
 
     $scope.getCredentials = function(clicked) {
@@ -56,22 +71,30 @@
       localStorageService.set('hide_stations', $scope.credentials.hide_stations);
     };
 
-    $scope.getActiveTournaments = function() {
+    $scope.getActiveTournaments = function(filter) {
       $scope.is_loading = true;
+
+      var state;
+      if ($scope.credentials.tournament_filter && 'value' in $scope.credentials.tournament_filter) {
+        state = $scope.credentials.tournament_filter.value;
+      }
+      else {
+        state = 'in_progress';
+      }
 
       $http.get("getTournaments/", {
         params: {
           "api_key" : $scope.credentials.api_key,
-          "subdomain" : $scope.credentials.subdomain
+          "subdomain" : $scope.credentials.subdomain,
+          "state" : state
         }
       })
       .success(function (data, status) {
         $scope.tournaments = data;
-        console.log($scope.tournaments);
         $scope.is_loading = false;
       })
       .error(function (data, status) {
-        console.log(data);
+        // console.log(data);
       });
     }; 
 

@@ -24,7 +24,12 @@
 <div id="chooseTournament" class="container" ng-if="confirmed && !activeTournament">
   <h1 class="text-center">Choose your Tournament</h1>
 
-  <div class="row">
+  <div class="text-center">
+    <select class="form-control form-small inline input-sm" ng-model="credentials.tournament_filter" ng-options="filter.name for filter in tournamentFilters" ng-change="getActiveTournaments()">
+    </select>
+  </div>
+
+  <div class="row" ng-if="tournaments.length">
     <div class="col-sm-12 col-md-6 col-md-push-3">
       <div ng-repeat="tournament in tournaments" class="tournament-list" ng-click="selectTournament(tournament);">
         <h2 style="display:inline-block;">
@@ -38,7 +43,11 @@
 
     </div>
   </div>
-
+  <div class="row" ng-if="!tournaments.length">
+    <div class="col-sm-12 text-center">
+      <h2>No tournaments found.</h2>
+    </div>
+  </div>
 </div>
 
 <div id="activeTournament" layout="column" flex ng-if="!is_loading && activeTournament">
@@ -112,7 +121,7 @@
               {{ 'Loser of ' + match_ids[match.match.player2_prereq_match_id].id }}
             </span>
           <td ng-hide="credentials.hide_stations"> 
-            <input ng-click="$event.stopPropagation()" placeholder="station" class="form-control" ng-model="match.match.station" ng-change="setStation(match.match.id, match.match.station)"/>
+            <input  ng-click="$event.stopPropagation()" placeholder="station" class="form-control input-sm" ng-model="match.match.station" ng-change="setStation(match.match.id, match.match.station)"/>
           </td>
         </tr>
       </tbody>

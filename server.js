@@ -21,6 +21,7 @@ app.get('/getTournaments/', function(req, res) {
 
   var api_key   = req.query.api_key;
   var subdomain = req.query.subdomain;
+  var state     = req.query.state;
 
   var url = 'https://api.challonge.com/v1/tournaments.json?api_key=';
   url += api_key;
@@ -28,8 +29,14 @@ app.get('/getTournaments/', function(req, res) {
   if (subdomain) {
     url += '&subdomain=' + subdomain;
   }
+
+  if (state) {
+    url += '&state=' + state;
+    console.log(state);
+  }
   
   request.get(url, function(error, response, body) {
+    console.log(body);
     res.send(body);
   });
 });
