@@ -100,11 +100,8 @@
         else {
           $scope.credentials.participant.subdomain = '';
         }
-        
 
         $scope.getCredentials(true, 'participant');
-
-
       }
     };
 
@@ -274,8 +271,8 @@
 
       $http.post("postMatchResults/", {
         data: {
-          "api_key" : $scope.credentials.api_key,
-          "subdomain" : $scope.credentials.subdomain,
+          "api_key" : $scope.credentials.organizer.api_key,
+          "subdomain" : $scope.credentials.organizer.subdomain,
           "tournament_url" : $scope.activeTournament.tournament.url,
           "match_id": $scope.currentMatch.match.id,
           "match_station": match_station,
@@ -363,8 +360,8 @@
 
         $http.post("postMatchStation/", {
           data: {
-            "api_key" : $scope.credentials.api_key,
-            "subdomain" : $scope.credentials.subdomain,
+            "api_key" : $scope.credentials.organizer.api_key,
+            "subdomain" : $scope.credentials.organizer.subdomain,
             "tournament_url" : $scope.activeTournament.tournament.url,
             "match_id": match_id,
             "match_station": station,
