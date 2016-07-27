@@ -100,7 +100,18 @@
 
     $scope.selectTournament = function(tournament) {
       $scope.activeTournament = tournament;
+      $scope.tournamentAttachments();
       $scope.getTournamentParticipants();
+    };
+
+    $scope.tournamentAttachments = function() {
+      $http.get("tournamentAttachments/", {
+        params: {
+          "api_key" : $scope.credentials.api_key,
+          "subdomain" : $scope.credentials.subdomain,
+          "tournament_url" : $scope.activeTournament.tournament.url
+        }
+      });
     };
 
     $scope.getTournamentParticipants = function() {

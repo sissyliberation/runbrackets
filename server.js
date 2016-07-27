@@ -62,6 +62,35 @@ app.get('/getTournamentParticipants/', function(req, res) {
   });
 });
 
+
+// TURN ON TOURNAMENT ATTACHMENTS
+app.get('/tournamentAttachments/', function(req, res) {
+  console.log('*************************************************************');
+  console.log();
+  console.log('TURN ON TOURNAMENT ATTACHMENTS');
+
+  var api_key        = req.query.api_key;
+  var tournament_url = req.query.tournament_url;
+  var subdomain      = req.query.subdomain;
+
+  if (subdomain) {
+    tournament_url = subdomain + '-' + tournament_url;
+  }
+
+  var url = 'https://api.challonge.com/v1/tournaments/' + tournament_url + '.json?api_key=';
+  url += api_key;
+
+  request({
+    url: url, method: 'PUT', json: {
+      "tournament": {
+        "accept_attachments": true
+      }
+    }
+  }, function(error, response, body) {
+    res.send(body);
+  });
+});
+
 // LIST ALL TOURNAMENT MATCHES
 app.get('/getMatches/', function(req, res) {
   console.log('*************************************************************');
