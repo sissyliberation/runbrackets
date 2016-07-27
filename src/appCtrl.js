@@ -2,7 +2,7 @@
   'use strict';
 
   var app = angular.module('app');
-  app.controller('appCtrl', function($scope, $http, localStorageService) {
+  app.controller('appCtrl', function($scope, $http, localStorageService, $interval) {
 
     $scope.activeTournament = '';
     $scope.matches = '';
@@ -130,15 +130,15 @@
           $scope.participants[participants[i].participant.id] = participants[i].participant.name;
         }
 
-        $scope.getTournamentMatches();
+        $scope.getTournamentMatches(true);
       })
       .error(function (data, status) {
        console.log(data);
       });
     };
 
-    $scope.getTournamentMatches = function() {
-      $scope.is_loading = true;
+    $scope.getTournamentMatches = function(reload) {
+      $scope.is_loading = reload;
 
       $http.get("getMatches/", {
         params: {
@@ -212,7 +212,7 @@
       .then(
        function(response){
          // $scope.setStation($scope.currentMatch.match.id, '');
-         $scope.getTournamentMatches();
+         $scope.getTournamentMatches(false);
          $('#matchModal').modal('hide');
        }, 
        function(response){
@@ -310,6 +310,10 @@
     // init
     $scope.getCredentials(false);
     $scope.getActiveTournaments();
+
+    $interval(function () {
+        $scope.getTournamentMatches(false);
+    }, 10000);
 
   });
 }());
