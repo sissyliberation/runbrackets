@@ -147,10 +147,15 @@
 
     $scope.activateTournament = function() {
       if ($scope.is_organizer) {
-         $scope.tournamentAttachments();
+        $scope.tournamentAttachments();
+        $scope.getTournamentParticipants();
       }
-     
-      $scope.getTournamentParticipants();
+      else {
+        $scope.getTournamentParticipants();
+        $interval(function () {
+          $scope.getTournamentParticipants(false);
+        }, 30000);
+      }
     }
 
     $scope.tournamentAttachments = function() {
@@ -163,8 +168,9 @@
       });
     };
 
-    $scope.getTournamentParticipants = function() {
-      $scope.is_loading = true;
+    $scope.getTournamentParticipants = function(reload) {
+      console.log(reload);
+      $scope.is_loading = reload;
 
       var api_key;
       var subdomain;
@@ -194,7 +200,7 @@
           $scope.participants[participants[i].participant.id] = participants[i].participant.name;
         }
 
-        $scope.getTournamentMatches(true);
+        $scope.getTournamentMatches(reload);
       })
       .error(function (data, status) {
        console.log(data);
@@ -397,9 +403,6 @@
     $scope.getCredentials(false, 'participant');
     
 
-    // $interval(function () {
-    //     $scope.getTournamentMatches(false);
-    // }, 10000);
 
   });
 }());
