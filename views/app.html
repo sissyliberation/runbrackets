@@ -121,7 +121,7 @@
               {{ 'Loser of ' + match_ids[match.match.player2_prereq_match_id].id }}
             </span>
           <td ng-hide="credentials.hide_stations"> 
-            <input  ng-click="$event.stopPropagation()" placeholder="station" class="form-control input-sm" ng-model="match.match.station" ng-change="setStation(match.match.id, match.match.station)"/>
+            <input  ng-click="$event.stopPropagation()" placeholder="station" class="form-control input-sm" ng-model="match.match.station" ng-change="updateMatchStation(match, match.match.station)" ng-model-options="{debounce:1000}"/>
           </td>
         </tr>
       </tbody>
