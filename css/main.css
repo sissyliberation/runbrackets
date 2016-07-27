@@ -6040,16 +6040,17 @@ a {
   -webkit-transform: translate(-50%, -50%);
   transform: translate(-50%, -50%); }
 
-#form-credentials {
+.form-credentials {
   padding: 15px;
-  position: absolute;
-  width: 50%;
+  /*position: absolute;*/
+  /*width: 50%;*/
+  max-width: 100%;
   min-width: 300px;
-  top: 50%;
-  left: 50%;
-  -webkit-transform: translate(-50%, -50%);
-  transform: translate(-50%, -50%); }
-  #form-credentials input {
+  /*  top: 50%;
+  left: 50%;*/
+  margin: 0 auto;
+  width: 80%; }
+  .form-credentials input {
     margin-bottom: 15px;
     height: 50px; }
 

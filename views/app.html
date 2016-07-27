@@ -4,28 +4,51 @@
   </div>
 </div>
 
-<div class="container" ng-if="!confirmed">
-  <form id="form-credentials">
-    <label for="api_key" class="sr-only">API Key</label>
-    <input ng-model="credentials.api_key" type="text" id="api_key" class="form-control" placeholder="API Key" required autofocus>
-    <label for="subdomain" class="sr-only">Subdomain</label>
-    <input ng-model="credentials.subdomain" type="text" id="subdomain" class="form-control" placeholder="Subdomain" required>
-    <p class="muted text-center">
-      Any information given is stored only in your browser (using localStorage), and nowhere else.
-    </p>
-    <div class="spaced text-center">
-      <button ng-disabled="!credentials.api_key" class="btn btn-lg btn-primary" ng-click="setCredentials();" >Let's Go</button>
+<div id="" class="container" ng-if="!confirmed" ng-init="tab=1">
+
+  <div class="spaced"></div>
+  <ul class="nav nav-tabs">
+    <li class="active"><a data-toggle="tab" ng-click="tab=1">Organizer</a></li>
+    <li><a data-toggle="tab" ng-click="tab=2">Participant</a></li>
+  </ul>
+
+  <div class="tab-content">
+    <div id="organizer" class="tab-pane fade" ng-if="tab==1" ng-class="{'in active': tab==1}">
+      <form class="form-credentials">
+        <label for="api_key" class="sr-only">API Key</label>
+        <input ng-model="credentials.organizer.api_key" type="text" id="api_key" class="form-control" placeholder="API Key" required autofocus>
+        <label for="subdomain" class="sr-only">Subdomain</label>
+        <input ng-model="credentials.organizer.subdomain" type="text" id="subdomain" class="form-control" placeholder="Subdomain">
+        <p class="muted text-center">
+          Any information given is stored only in your browser, and nowhere else.
+        </p>
+        <div class="spaced text-center">
+          <button ng-disabled="!credentials.organizer.api_key" class="btn btn-lg btn-primary" ng-click="setCredentials('organizer');" >Let's Go</button>
+        </div>
+      </form>
     </div>
-  </form>
+    <div id="participant" class="tab-pane fade" ng-if="tab==2" ng-class="{'in active': tab==2}">
+      <form class="form-credentials">
+        <label for="api_key" class="sr-only">API Key</label>
+        <input ng-model="credentials.full_challonge_url" type="text" id="url" class="form-control" placeholder="Challonge URL" required autofocus>
+        <div class="spaced text-center">
+          <button ng-disabled="!credentials.full_challonge_url" class="btn btn-lg btn-primary" ng-click="setCredentials('participant');" >Let's Go</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+
+
 </div> 
 
 
 
-<div id="chooseTournament" class="container" ng-if="confirmed && !activeTournament">
+<div id="chooseTournament" class="container" ng-if="is_organizer && confirmed && !activeTournament">
   <h1 class="text-center">Choose your Tournament</h1>
 
   <div class="text-center">
-    <select class="form-control form-small inline input-sm" ng-model="credentials.tournament_filter" ng-options="filter.name for filter in tournamentFilters" ng-change="getActiveTournaments()">
+    <select class="form-control form-small inline input-sm" ng-model="credentials.organizer.tournament_filter" ng-options="filter.name for filter in tournamentFilters" ng-change="getActiveTournaments()">
     </select>
   </div>
 
@@ -43,14 +66,14 @@
 
     </div>
   </div>
-  <div class="row" ng-if="!tournaments.length">
+  <div class="row" ng-if="!tournaments.length && !is_loading">
     <div class="col-sm-12 text-center">
       <h2>No tournaments found.</h2>
     </div>
   </div>
 </div>
 
-<div id="activeTournament" layout="column" flex ng-if="!is_loading && activeTournament">
+<div id="activeTournament" layout="column" flex ng-if="!is_loading && confirmed && (activeTournament || !is_organizer)">
 
   <div>
     <h1 class="text-center">
@@ -121,7 +144,10 @@
               {{ 'Loser of ' + match_ids[match.match.player2_prereq_match_id].id }}
             </span>
           <td ng-hide="credentials.hide_stations"> 
-            <input  ng-click="$event.stopPropagation()" placeholder="station" class="form-control input-sm" ng-model="match.match.station" ng-change="updateMatchStation(match, match.match.station)" ng-model-options="{debounce:1000}"/>
+            <input ng-if="is_organizer" ng-click="$event.stopPropagation()" placeholder="station" class="form-control input-sm" ng-model="match.match.station" ng-change="updateMatchStation(match, match.match.station)" ng-model-options="{debounce:1000}"/>
+            <span ng-if="!is_organizer">
+              {{match.match.station}}
+            </span>
           </td>
         </tr>
       </tbody>

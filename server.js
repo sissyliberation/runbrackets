@@ -10,6 +10,8 @@ var port = process.env.PORT || 8080;
 
 app.set('view engine', 'ejs');
 
+var CHALLONGE_API_KEY = process.env.CHALLONGE_API_KEY;
+
 app.use(bodyParser.json());                        
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(__dirname));
@@ -46,9 +48,10 @@ app.get('/getTournamentParticipants/', function(req, res) {
   console.log();
   console.log('GET TOURNAMENT PARTICIPANTS');
 
-  var api_key        = req.query.api_key;
+  var api_key        = req.query.api_key || CHALLONGE_API_KEY;
   var tournament_url = req.query.tournament_url;
   var subdomain      = req.query.subdomain;
+  var is_organizer   = req.query.is_organizer;
 
   if (subdomain) {
     tournament_url = subdomain + '-' + tournament_url;
@@ -100,6 +103,11 @@ app.get('/getMatches/', function(req, res) {
   var api_key        = req.query.api_key;
   var tournament_url = req.query.tournament_url;
   var subdomain      = req.query.subdomain;
+  var is_organizer   = req.query.is_organizer;
+
+  if (is_organizer != true) {
+    api_key = CHALLONGE_API_KEY;
+  }
 
   if (subdomain) {
     tournament_url = subdomain + '-' + tournament_url;
@@ -107,6 +115,7 @@ app.get('/getMatches/', function(req, res) {
 
   var url = 'https://api.challonge.com/v1/tournaments/' + tournament_url + '/matches.json?api_key=';
   url += api_key;
+
 
   request.get(url, function(error, response, body) {
     res.send(body);
@@ -157,6 +166,13 @@ app.get('/getMatchStation/', function(req, res) {
   var tournament_url = req.query.tournament_url;
   var match_id       = req.query.match_id;
   var subdomain      = req.query.subdomain;
+
+  var is_organizer   = req.query.is_organizer;
+
+  if (is_organizer != true) {
+    api_key = CHALLONGE_API_KEY;
+  }
+
 
   if (subdomain) {
     tournament_url = subdomain + '-' + tournament_url;
