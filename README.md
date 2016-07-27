@@ -15,7 +15,7 @@ Then, head [here](http://challonge-to.herokuapp.com/#/). You're all set.
 
 ### Prerequisities
 
-You'll need Node and NPMinstalled. 
+You'll need Node and NPM installed. 
 
 ### Installing
 
