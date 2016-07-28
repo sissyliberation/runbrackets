@@ -126,21 +126,22 @@
             <span class="player" ng-if="participants[match.match.player1_id]">
               {{ participants[match.match.player1_id] }}
             </span>
-            <span ng-if="!participants[match.match.player1_id] && match.match.round > match_ids[match.match.player1_prereq_match_id].round">
+            <span ng-if="!participants[match.match.player1_id] && Math.abs(match.match.round) >= Math.abs(match_ids[match.match.player1_prereq_match_id].round)">
               {{ 'Winner of ' + match_ids[match.match.player1_prereq_match_id].id }}
             </span>
-            <span ng-if="!participants[match.match.player1_id] && match.match.round < match_ids[match.match.player1_prereq_match_id].round">
+            <span ng-if="!participants[match.match.player1_id] && Math.abs(match.match.round) < Math.abs(match_ids[match.match.player1_prereq_match_id].round)">
               {{ 'Loser of ' + match_ids[match.match.player1_prereq_match_id].id }}
             </span>
+            {{ Math.abs(match.match.round) }}, {{ Math.abs(match_ids[match.match.player1_prereq_match_id].round) }}   
           </td>
           <td ng-class="{'bold':match.match.winner_id && match.match.winner_id == match.match.player2_id}">
             <span class="player" ng-if="participants[match.match.player2_id]">
               {{ participants[match.match.player2_id] }}
             </span>
-            <span ng-if="!participants[match.match.player2_id] && match.match.round > match_ids[match.match.player2_prereq_match_id].round">
+            <span ng-if="!participants[match.match.player2_id] && Math.abs(match.match.round) >= Math.abs(match_ids[match.match.player2_prereq_match_id].round)">
               {{ 'Winner of ' + match_ids[match.match.player2_prereq_match_id].id }}
             </span>
-            <span ng-if="!participants[match.match.player2_id] && match.match.round < match_ids[match.match.player2_prereq_match_id].round">
+            <span ng-if="!participants[match.match.player2_id] && Math.abs(match.match.round) < Math.abs(match_ids[match.match.player2_prereq_match_id].round)">
               {{ 'Loser of ' + match_ids[match.match.player2_prereq_match_id].id }}
             </span>
           <td ng-hide="credentials.hide_stations"> 

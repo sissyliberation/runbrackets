@@ -4,6 +4,9 @@
   var app = angular.module('app');
   app.controller('appCtrl', function($scope, $http, localStorageService, $interval) {
 
+
+    $scope.Math = window.Math;
+
     $scope.activeTournament = '';
     $scope.matches = '';
     $scope.match_ids = {};
