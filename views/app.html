@@ -131,8 +131,7 @@
             </span>
             <span ng-if="!participants[match.match.player1_id] && Math.abs(match.match.round) < Math.abs(match_ids[match.match.player1_prereq_match_id].round)">
               {{ 'Loser of ' + match_ids[match.match.player1_prereq_match_id].id }}
-            </span>
-            {{ Math.abs(match.match.round) }}, {{ Math.abs(match_ids[match.match.player1_prereq_match_id].round) }}   
+            </span> 
           </td>
           <td ng-class="{'bold':match.match.winner_id && match.match.winner_id == match.match.player2_id}">
             <span class="player" ng-if="participants[match.match.player2_id]">
