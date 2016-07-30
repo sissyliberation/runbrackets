@@ -37,12 +37,7 @@
       </form>
     </div>
   </div>
-
-
-
 </div> 
-
-
 
 <div id="chooseTournament" class="container" ng-if="is_organizer && confirmed && !activeTournament">
   <h1 class="text-center">Choose your Tournament</h1>
@@ -52,20 +47,21 @@
     </select>
   </div>
 
-  <div class="row" ng-if="tournaments.length">
+  <div class="row spaced" ng-if="tournaments.length">
     <div class="col-sm-12 col-md-6 col-md-push-3">
-      <div ng-repeat="tournament in tournaments" class="tournament-list" ng-click="selectTournament(tournament);">
-        <h2 style="display:inline-block;">
+      <ul class="list-group" ng-if="tournaments.length">
+        <li class="list-group-item" ng-repeat="tournament in tournaments" ng-click="selectTournament(tournament);">
+          
           {{tournament.tournament.name}}
-        </h2>
-
-        <a class="pull-right link" href="{{tournament.tournament.full_challonge_url}}" target="_blank">
-          <i class="fa fa-external-link-square" aria-hidden="true"></i>
-        </a> 
-      </div>
-
+          <span class="pull-right link" >
+              <a href="{{tournament.tournament.full_challonge_url}}" target="_blank"><i class="fa fa-external-link-square" aria-hidden="true"></i>
+              </a>
+          </span> 
+        </li>
+      </ul>
     </div>
   </div>
+
   <div class="row" ng-if="!tournaments.length && !is_loading">
     <div class="col-sm-12 text-center">
       <h2>No tournaments found.</h2>
