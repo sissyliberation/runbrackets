@@ -1,23 +1,10 @@
-.tournament-list {
-  border-bottom: 1px solid #ccc;
-  padding-left: 10px;
-  padding-right: 10px;
+#chooseTournament {
 
-  &:hover {
-    cursor: pointer;
-    color: $primary-color;
-  }
-
-  &:last-child {
-    border-bottom: 0px;
-  }
-
-  .link {
-    margin-top: 20px;
-  }
-  
-  h2 {
-    margin-top: 10px;
+  .list-group-item {
+    &:hover {
+      cursor: pointer;
+      background: $table-bg-hover;
+    }
   }
 }
 

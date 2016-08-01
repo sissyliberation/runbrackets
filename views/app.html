@@ -47,7 +47,7 @@
     </select>
   </div>
 
-  <div class="row spaced" ng-if="tournaments.length">
+  <div class="row spaced" ng-if="tournaments.length" class="tournament-list">
     <div class="col-sm-12 col-md-6 col-md-push-3">
       <ul class="list-group" ng-if="tournaments.length">
         <li class="list-group-item" ng-repeat="tournament in tournaments" ng-click="selectTournament(tournament);">
