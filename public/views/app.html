@@ -84,11 +84,15 @@
   </div>
 
   <div class="row">
-    <div class="col-sm-6">
+    <div class="col-sm-3">
           hide completed matches: 
     <input type="checkbox" ng-model="credentials.hide_completed" ng-change="hideCompletedMatches()" class="ng-pristine ng-untouched ng-valid ng-empty">
     </div>
-    <div class="col-sm-6 col-md-3 col-md-push-3">
+	  <div class="col-sm-3 col-md-3">
+		  hide unavailable:
+		  <input type="checkbox" ng-model="credentials.hide_unavailable" ng-change="hideUnavailableMatches()" class="ng-pristine ng-untouched ng-valid ng-empty">
+	  </div>
+    <div class="col-sm-3 col-md-3 col-md-push-3">
           hide stations: 
     <input type="checkbox" ng-model="credentials.hide_stations" ng-change="hideStations()" class="ng-pristine ng-untouched ng-valid ng-empty">
     </div>
@@ -114,7 +118,10 @@
       </thead>
       <tbody>
 
-        <tr ng-repeat="match in matches" ng-class="{'info': match.match.state=='open' && (match.match.underway_at || match.match.scores_csv), 'active': match.match.state=='open' && !match.match.underway_at, 'error': match.match.state=='pending', 'success': match.match.state=='complete'}" ng-hide="credentials.hide_completed && match.match.state=='complete'" ng-click="editMatch(match)">
+        <tr ng-repeat="match in matches"
+			ng-class="{'info': match.match.state=='open' && (match.match.underway_at || match.match.scores_csv), 'active': match.match.state=='open' && !match.match.underway_at, 'error': match.match.state=='pending', 'success': match.match.state=='complete'}"
+			ng-hide="(credentials.hide_completed && match.match.state=='complete') || (credentials.hide_unavailable && match.match.state=='pending')"
+			ng-click="editMatch(match)">
           <th scope="row">
             {{match.match.identifier}} ({{ determineRound(match.match.round) }})
           </th>

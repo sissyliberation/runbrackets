@@ -43,6 +43,7 @@
       'subdomain': '',
       'hide_completed': localStorageService.get('hide_completed'),
       'hide_stations': localStorageService.get('hide_stations'),
+		'hide_unavailable': localStorageService.get('hide_unavailable')
 
     };
 
@@ -112,6 +113,9 @@
     $scope.hideStations = function() {
       localStorageService.set('hide_stations', $scope.credentials.hide_stations);
     };
+	  $scope.hideUnavailableMatches = function() {
+		  localStorageService.set('hide_unavailable', $scope.credentials.hide_unavailable);
+	  };
 
     $scope.getActiveTournaments = function(filter) {
 
