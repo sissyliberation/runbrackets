@@ -1,21 +1,21 @@
 #matches-table {
   vertical-align: center;
 
-  tbody>tr:hover {
+  tbody > tr:hover {
     cursor: pointer;
   }
 
-  tbody>tr>td,
-  tbody>tr>th {
+  tbody > tr > td,
+  tbody > tr > th {
     vertical-align: middle;
   }
 }
+
 /*#matches-table tbody>tr>td>.player:hover {
   color: #c0392b;
   font-weight: bold;
 }*/
 
-  
 /*#matches-table thead {
   background-color: $primary-color;
   color: #fff;

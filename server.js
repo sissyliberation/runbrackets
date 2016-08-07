@@ -1,4 +1,4 @@
-var express = require('express'); 
+var express = require('express');
 var request = require('request');
 var bodyParser = require('body-parser');
 
@@ -10,16 +10,16 @@ CHALLONGE_API_KEY = process.env.CHALLONGE_API_KEY;
 app
 	.set('view engine', 'ejs')
 	.use(bodyParser.json())
-	.use(bodyParser.urlencoded({ extended: true }))
+	.use(bodyParser.urlencoded({extended: true}))
 	.use(express.static(__dirname))
 	.use(express.static(root_public))
 
 	.use('/query', require('./routes/queries'))
-	
-	.get('*', function(req, res) {
-		res.sendFile('./index.html', { root: root_public });
+
+	.get('*', function (req, res) {
+		res.sendFile('./index.html', {root: root_public});
 	})
 
 	.listen(port);
-	
+
 console.log('Server started on port: ' + port);
