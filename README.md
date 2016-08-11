@@ -33,6 +33,13 @@ Install all the dependencies.
 npm install
 ```
 
+Add your Challonge API Key to the server.js file.
+Mine is an environment variable in Heroku. You can add yours on line 13.
+
+```
+var CHALLONGE_API_KEY = process.env.CHALLONGE_API_KEY || 'INSERT API KEY HERE';
+```
+
 Get the server up.
 
 ```
