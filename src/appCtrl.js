@@ -117,14 +117,14 @@
 
     $scope.getActiveTournaments = function(filter) {
 
+      console.log('hello');
+
       $scope.is_loading = true;
 
-      var state;
-      if ($scope.credentials.tournament_filter && 'value' in $scope.credentials.tournament_filter) {
-        state = $scope.organizer.credentials.tournament_filter.value;
-      }
-      else {
-        state = 'in_progress';
+      var state = 'in_progress';
+
+      if ($scope.credentials.organizer.tournament_filter && 'value' in $scope.credentials.organizer.tournament_filter) {
+        state = $scope.credentials.organizer.tournament_filter.value;
       }
 
       $http.get("getTournaments/", {
