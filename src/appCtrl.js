@@ -134,12 +134,13 @@
           "state" : state
         }
       })
-      .success(function (data, status) {
-        $scope.tournaments = data;
-        $scope.is_loading = false;
-      })
-      .error(function (data, status) {
-        // console.log(data);
+      .then(
+        function(data, status){
+          $scope.tournaments = data;
+          $scope.is_loading = false;
+        }, 
+        function(data. status){
+          console.log(data);
       });
     }; 
 
@@ -196,17 +197,18 @@
           "is_organizer"   : $scope.is_organizer
         }
       })
-      .success(function (data, status) {
-        var participants = data;
+      .then(
+        function(data, status) {
+          var participants = data;
 
-        for(var i = 0; i < participants.length; i++) {
-          $scope.participants[participants[i].participant.id] = participants[i].participant.name;
-        }
+          for(var i = 0; i < participants.length; i++) {
+            $scope.participants[participants[i].participant.id] = participants[i].participant.name;
+          }
 
-        $scope.getTournamentMatches(reload);
-      })
-      .error(function (data, status) {
-       console.log(data);
+          $scope.getTournamentMatches(reload);
+        }, 
+        function(data, status) {
+          console.log(data);
       });
     };
 
@@ -293,14 +295,13 @@
         }
       })
       .then(
-       function(response){
-         // $scope.setStation($scope.currentMatch.match.id, '');
-         $scope.getTournamentMatches(false);
-         $('#matchModal').modal('hide');
-       }, 
-       function(response){
-        console.log(response);
-       });
+        function(response){
+          $scope.getTournamentMatches(false);
+          $('#matchModal').modal('hide');
+        }, 
+        function(response){
+          console.log(response);
+      });
     };
 
     $scope.getMatchStation = function(match) {
@@ -330,27 +331,26 @@
         }
       })
       .then(
-       function(response) {
-
-        if (!response.data.match) {
-          return;
-        }
-
-        var match_data = response.data.match;
-
-        var station = '';
-        var id = '';
-
-        for(var i = 0; i < match_data.attachment_count; ++i) {
-          if(match_data.attachments[i].match_attachment.description.substring(0,8) == 'station ') {
-            match.match.station = match_data.attachments[i].match_attachment.description.substring(8);
-            match.match.station_id = match_data.attachments[i].match_attachment.id;
+        function(response) {
+          if (!response.data.match) {
+            return;
           }
-        }
-       }, 
-       function(response){
-        console.log(response);
-       });
+
+          var match_data = response.data.match;
+
+          var station = '';
+          var id = '';
+
+          for(var i = 0; i < match_data.attachment_count; ++i) {
+            if(match_data.attachments[i].match_attachment.description.substring(0,8) == 'station ') {
+              match.match.station = match_data.attachments[i].match_attachment.description.substring(8);
+              match.match.station_id = match_data.attachments[i].match_attachment.id;
+            }
+          }
+        }, 
+        function(response){
+          console.log(response);
+      });
     };
 
     $scope.updateMatchStation = function(match, station) {
@@ -382,11 +382,11 @@
           }
         })
         .then(
-        function(response){
-          $scope.getMatchStation(match);
-        }, 
-        function(response){
-          alert('Error, sorry. Working on it');
+          function(response){
+            $scope.getMatchStation(match);
+          }, 
+          function(response){
+            alert('Error, sorry. Working on it');
         });
 
       }
