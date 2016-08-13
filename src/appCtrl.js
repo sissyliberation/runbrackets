@@ -249,6 +249,9 @@
           if (value.match.attachment_count) {
            $scope.getMatchStation(value);
           }
+
+          // sort matches
+          value.match.order = $scope.matchOrder(value);
         });
 
         $scope.is_loading = false;
@@ -399,6 +402,31 @@
       }
       round = Math.abs(round);
       return place + round;
+    };
+
+
+    // determine match order by state
+    // 0: green  / success
+    // 1: purple / info
+    // 2: grey   / pending
+    // 3: white  / none
+    // 4: red    / error (not yet implemented)
+    $scope.matchOrder = function(match) {
+      if (match.match.state == 'complete') {
+        return 0;
+
+      }
+      else if (match.match.state == 'open') {
+        if (match.match.underway_at || match.match.scores_csv) {
+          return 1;
+        }
+        else {
+          return 2;
+        }
+      }
+      else {
+        return 3;
+      }
     };
 
     // init
