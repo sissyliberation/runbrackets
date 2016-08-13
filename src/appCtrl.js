@@ -139,7 +139,7 @@
           $scope.tournaments = data;
           $scope.is_loading = false;
         }, 
-        function(data. status){
+        function(data, status){
           console.log(data);
       });
     }; 
