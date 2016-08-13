@@ -116,9 +116,6 @@
     };
 
     $scope.getActiveTournaments = function(filter) {
-
-      console.log('hello');
-
       $scope.is_loading = true;
 
       var state = 'in_progress';
@@ -135,11 +132,11 @@
         }
       })
       .then(
-        function(data, status){
-          $scope.tournaments = data;
+        function(data, status) {
+          $scope.tournaments = data.data;
           $scope.is_loading = false;
         }, 
-        function(data, status){
+        function(data, status) {
           console.log(data);
       });
     }; 
@@ -173,7 +170,6 @@
     };
 
     $scope.getTournamentParticipants = function(reload) {
-      console.log(reload);
       $scope.is_loading = reload;
 
       var api_key;
@@ -199,7 +195,7 @@
       })
       .then(
         function(data, status) {
-          var participants = data;
+          var participants = data.data;
 
           for(var i = 0; i < participants.length; i++) {
             $scope.participants[participants[i].participant.id] = participants[i].participant.name;
@@ -237,29 +233,32 @@
           "is_organizer"   : $scope.is_organizer
         }
       })
-      .success(function (data, status) {
-        $scope.matches = data;
-        $scope.match_ids = {};
+      .then(
+        function(data, status) {
+          $scope.matches = data.data;
+          $scope.match_ids = {};
 
-        // store match ids to determine winner
-        angular.forEach($scope.matches, function(value) {
-          $scope.match_ids[value.match.id] = {
-            'id': value.match.identifier,
-            'round': value.match.round
-          };
+          // store match ids to determine winner
+          angular.forEach($scope.matches, function(value) {
+            $scope.match_ids[value.match.id] = {
+              'id': value.match.identifier,
+              'round': value.match.round
+            };
 
-          if (value.match.attachment_count) {
-           $scope.getMatchStation(value);
-          }
+            if (value.match.attachment_count) {
+             $scope.getMatchStation(value);
+            }
 
-          // sort matches
-          value.match.order = $scope.matchOrder(value);
-        });
+            // sort matches
+            value.match.order = $scope.matchOrder(value);
+          });
 
-        $scope.is_loading = false;
-      })
-      .error(function (data, status) {
-       console.log(data);
+          $scope.is_loading = false;
+          
+        }, 
+        function(data, status) {
+          console.log(data);
+          
       });
     };
 
@@ -295,11 +294,11 @@
         }
       })
       .then(
-        function(response){
+        function(response) {
           $scope.getTournamentMatches(false);
           $('#matchModal').modal('hide');
         }, 
-        function(response){
+        function(response) {
           console.log(response);
       });
     };
@@ -348,7 +347,7 @@
             }
           }
         }, 
-        function(response){
+        function(response) {
           console.log(response);
       });
     };
@@ -382,10 +381,10 @@
           }
         })
         .then(
-          function(response){
+          function(response) {
             $scope.getMatchStation(match);
           }, 
-          function(response){
+          function(response) {
             alert('Error, sorry. Working on it');
         });
 
