@@ -116,15 +116,12 @@
     };
 
     $scope.getActiveTournaments = function(filter) {
-
       $scope.is_loading = true;
 
-      var state;
-      if ($scope.credentials.tournament_filter && 'value' in $scope.credentials.tournament_filter) {
-        state = $scope.organizer.credentials.tournament_filter.value;
-      }
-      else {
-        state = 'in_progress';
+      var state = 'in_progress';
+
+      if ($scope.credentials.organizer.tournament_filter && 'value' in $scope.credentials.organizer.tournament_filter) {
+        state = $scope.credentials.organizer.tournament_filter.value;
       }
 
       $http.get("getTournaments/", {
@@ -134,12 +131,13 @@
           "state" : state
         }
       })
-      .success(function (data, status) {
-        $scope.tournaments = data;
-        $scope.is_loading = false;
-      })
-      .error(function (data, status) {
-        // console.log(data);
+      .then(
+        function(data, status) {
+          $scope.tournaments = data.data;
+          $scope.is_loading = false;
+        }, 
+        function(data, status) {
+          console.log(data);
       });
     }; 
 
@@ -172,7 +170,6 @@
     };
 
     $scope.getTournamentParticipants = function(reload) {
-      console.log(reload);
       $scope.is_loading = reload;
 
       var api_key;
@@ -196,17 +193,18 @@
           "is_organizer"   : $scope.is_organizer
         }
       })
-      .success(function (data, status) {
-        var participants = data;
+      .then(
+        function(data, status) {
+          var participants = data.data;
 
-        for(var i = 0; i < participants.length; i++) {
-          $scope.participants[participants[i].participant.id] = participants[i].participant.name;
-        }
+          for(var i = 0; i < participants.length; i++) {
+            $scope.participants[participants[i].participant.id] = participants[i].participant.name;
+          }
 
-        $scope.getTournamentMatches(reload);
-      })
-      .error(function (data, status) {
-       console.log(data);
+          $scope.getTournamentMatches(reload);
+        }, 
+        function(data, status) {
+          console.log(data);
       });
     };
 
@@ -235,26 +233,32 @@
           "is_organizer"   : $scope.is_organizer
         }
       })
-      .success(function (data, status) {
-        $scope.matches = data;
-        $scope.match_ids = {};
+      .then(
+        function(data, status) {
+          $scope.matches = data.data;
+          $scope.match_ids = {};
 
-        // store match ids to determine winner
-        angular.forEach($scope.matches, function(value) {
-          $scope.match_ids[value.match.id] = {
-            'id': value.match.identifier,
-            'round': value.match.round
-          };
+          // store match ids to determine winner
+          angular.forEach($scope.matches, function(value) {
+            $scope.match_ids[value.match.id] = {
+              'id': value.match.identifier,
+              'round': value.match.round
+            };
 
-          if (value.match.attachment_count) {
-           $scope.getMatchStation(value);
-          }
-        });
+            if (value.match.attachment_count) {
+             $scope.getMatchStation(value);
+            }
 
-        $scope.is_loading = false;
-      })
-      .error(function (data, status) {
-       console.log(data);
+            // sort matches
+            value.match.order = $scope.matchOrder(value);
+          });
+
+          $scope.is_loading = false;
+          
+        }, 
+        function(data, status) {
+          console.log(data);
+          
       });
     };
 
@@ -290,14 +294,13 @@
         }
       })
       .then(
-       function(response){
-         // $scope.setStation($scope.currentMatch.match.id, '');
-         $scope.getTournamentMatches(false);
-         $('#matchModal').modal('hide');
-       }, 
-       function(response){
-        console.log(response);
-       });
+        function(response) {
+          $scope.getTournamentMatches(false);
+          $('#matchModal').modal('hide');
+        }, 
+        function(response) {
+          console.log(response);
+      });
     };
 
     $scope.getMatchStation = function(match) {
@@ -327,27 +330,26 @@
         }
       })
       .then(
-       function(response) {
-
-        if (!response.data.match) {
-          return;
-        }
-
-        var match_data = response.data.match;
-
-        var station = '';
-        var id = '';
-
-        for(var i = 0; i < match_data.attachment_count; ++i) {
-          if(match_data.attachments[i].match_attachment.description.substring(0,8) == 'station ') {
-            match.match.station = match_data.attachments[i].match_attachment.description.substring(8);
-            match.match.station_id = match_data.attachments[i].match_attachment.id;
+        function(response) {
+          if (!response.data.match) {
+            return;
           }
-        }
-       }, 
-       function(response){
-        console.log(response);
-       });
+
+          var match_data = response.data.match;
+
+          var station = '';
+          var id = '';
+
+          for(var i = 0; i < match_data.attachment_count; ++i) {
+            if(match_data.attachments[i].match_attachment.description.substring(0,8) == 'station ') {
+              match.match.station = match_data.attachments[i].match_attachment.description.substring(8);
+              match.match.station_id = match_data.attachments[i].match_attachment.id;
+            }
+          }
+        }, 
+        function(response) {
+          console.log(response);
+      });
     };
 
     $scope.updateMatchStation = function(match, station) {
@@ -379,11 +381,11 @@
           }
         })
         .then(
-        function(response){
-          $scope.getMatchStation(match);
-        }, 
-        function(response){
-          alert('Error, sorry. Working on it');
+          function(response) {
+            $scope.getMatchStation(match);
+          }, 
+          function(response) {
+            alert('Error, sorry. Working on it');
         });
 
       }
@@ -399,6 +401,31 @@
       }
       round = Math.abs(round);
       return place + round;
+    };
+
+
+    // determine match order by state
+    // 0: green  / success
+    // 1: purple / info
+    // 2: grey   / pending
+    // 3: white  / none
+    // 4: red    / error (not yet implemented)
+    $scope.matchOrder = function(match) {
+      if (match.match.state == 'complete') {
+        return 0;
+
+      }
+      else if (match.match.state == 'open') {
+        if (match.match.underway_at || match.match.scores_csv) {
+          return 1;
+        }
+        else {
+          return 2;
+        }
+      }
+      else {
+        return 3;
+      }
     };
 
     // init

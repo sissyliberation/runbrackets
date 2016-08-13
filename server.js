@@ -10,7 +10,7 @@ var port = process.env.PORT || 8080;
 
 app.set('view engine', 'ejs');
 
-var CHALLONGE_API_KEY = process.env.CHALLONGE_API_KEY;
+var CHALLONGE_API_KEY = process.env.CHALLONGE_API_KEY || 'INSERT API KEY HERE';
 
 app.use(bodyParser.json());                        
 app.use(bodyParser.urlencoded({ extended: true }));

@@ -114,7 +114,7 @@
       </thead>
       <tbody>
 
-        <tr ng-repeat="match in matches" ng-class="{'info': match.match.state=='open' && (match.match.underway_at || match.match.scores_csv), 'active': match.match.state=='open' && !match.match.underway_at, 'error': match.match.state=='pending', 'success': match.match.state=='complete'}" ng-hide="credentials.hide_completed && match.match.state=='complete'" ng-click="editMatch(match)">
+        <tr ng-repeat="match in matches | orderBy:['match.order','match.suggested_play_order']" ng-class="{ 'success': match.match.order == 0, 'info': match.match.order == 1, 'active': match.match.order == 2, 'error': match.match.order == 4}" ng-hide="credentials.hide_completed && match.match.order == 0" ng-click="editMatch(match)">
           <th scope="row">
             {{match.match.identifier}} ({{ determineRound(match.match.round) }})
           </th>
@@ -140,8 +140,8 @@
               {{ 'Loser of ' + match_ids[match.match.player2_prereq_match_id].id }}
             </span>
           <td ng-hide="credentials.hide_stations"> 
-            <input ng-if="is_organizer" ng-click="$event.stopPropagation()" placeholder="station" class="form-control input-sm" ng-model="match.match.station" ng-change="updateMatchStation(match, match.match.station)" ng-model-options="{debounce:1000}"/>
-            <span ng-if="!is_organizer">
+            <input ng-if="is_organizer" ng-click="$event.stopPropagation()" placeholder="station" class="form-control input-sm station" ng-model="match.match.station" ng-change="updateMatchStation(match, match.match.station)" ng-model-options="{debounce:300}"/>
+            <span ng-if="!is_organizer" class="station">
               {{match.match.station}}
             </span>
           </td>
