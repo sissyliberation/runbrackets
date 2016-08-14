@@ -198,8 +198,10 @@
           var participants = data.data;
 
           for(var i = 0; i < participants.length; i++) {
-            $scope.participants[participants[i].participant.id] = participants[i].participant.name;
+            $scope.participants[participants[i].participant.id] = participants[i].participant.name || participants[i].participant.username || participants[i].participant.display_name;
           }
+
+          console.log($scope.participants);
 
           $scope.getTournamentMatches(reload);
         }, 
