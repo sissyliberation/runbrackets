@@ -33,20 +33,26 @@ Install all the dependencies.
 npm install
 ```
 
-Add your Challonge API Key to the server.js file.
-Mine is an environment variable in Heroku. You can add yours on line 13.
+A Challonge API Key is required for all service calls, so ensure that the var CHALLONGE_API_KEY is set in your local environment.
+Deployments on Heroku can have this defined in the Heroku properties, and local deployments can be started with an optional parameter.
 
+Windows; setting an api key for the life of the current terminal session. startup.bat can be edited to manage this for you.
+```
+setx CHALLONGE_API_KEY <your-api-key>
+```
+
+Alternatively, you can edit the server.js configuration, just ensure that your api key is never included in a public git commit.
 ```
 var CHALLONGE_API_KEY = process.env.CHALLONGE_API_KEY || 'INSERT API KEY HERE';
 ```
 
-Get the server up.
+Start the server.
 
 ```
 node server.js
 ```
 
-Head on over to http://localhost:8080/#/ to see your local copy.
+Head on over to http://localhost:8080/ to see your local deployment.
 
 ## Built With
 

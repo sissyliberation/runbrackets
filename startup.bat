@@ -1,0 +1,3 @@
+@ECHO OFF
+setx CHALLONGE_API_KEY <YOUR_API_KEY>
+node server.js

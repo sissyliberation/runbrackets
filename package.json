@@ -1,24 +1,24 @@
 {
-  "name": "challonge-match-display",
-  "version": "0.0.1",
-  "description": "Run your Challonge brackets better",
-  "licenses": [
-    {
-      "type": "MIT"
-    }
-  ],
-  "dependencies": {
-    "angular-local-storage": "^0.2.7",
-    "body-parser": "^1.15.2",
-    "express": "^4.14.0",
-    "request": "^2.73.0"
-  },
-  "devDependencies": {
-    "node-sass": "^3.8.0",
-    "nodemon": "^1.9.2"
-  },
-  "scripts": {
-    "build-css": "node-sass --include-path scss scss/main.scss css/main.css",
-    "watch-css": "nodemon -e scss -x \"npm run build-css\""
-  }
+	"name": "challonge-match-display",
+	"version": "0.0.1",
+	"description": "Run your Challonge brackets better",
+	"licenses": [
+		{
+			"type": "MIT"
+		}
+	],
+	"dependencies": {
+		"angular-local-storage": "^0.2.7",
+		"body-parser": "^1.15.2",
+		"express": "^4.14.0",
+		"request": "^2.73.0"
+	},
+	"devDependencies": {
+		"node-sass": "^3.8.0",
+		"nodemon": "^1.9.2"
+	},
+	"scripts": {
+		"build-css": "node-sass --include-path scss public/scss/main.scss public/css/main.css",
+		"watch-css": "nodemon -e scss -x \"npm run build-css\""
+	}
 }
