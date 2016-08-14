@@ -1,29 +1,44 @@
 (function () {
 	'use strict';
 
-	angular.module('app', ['ngAnimate', 'ngRoute', 'LocalStorageModule'])
-		.config(function ($routeProvider, $locationProvider, $httpProvider) {
-			$routeProvider
-				.when('/', {
-					templateUrl: 'views/landing.html'
+	angular.module('app', ['ngAnimate', 'ui.router', 'ngRoute', 'LocalStorageModule'])
+		.config(function ($stateProvider, $urlRouterProvider, $locationProvider, $httpProvider) {
+			$urlRouterProvider.otherwise('/');
+
+			$stateProvider
+				.state('home', {
+					url			: '/',
+					templateUrl	: 'views/landing.html'
 				})
-				.when('/about', {
-					templateUrl: 'views/about.html'
+				.state('about', {
+					url			: '/about',
+					templateUrl	: 'views/about.html'
 				})
-				.when('/contact', {
-					templateUrl: 'views/contact.html'
+				.state('contact', {
+					url			: '/contact',
+					templateUrl	: 'views/contact.html'
 				})
-				.when('/app', {
-					templateUrl: 'views/app.html',
-					controller: 'appCtrl'
+				.state('app', {
+					abstract	: true,
+					url			: '/app',
+					template	: '<div ui-view></div>',
+					controller	: 'appCtrl'
 				})
-				.otherwise({
-					redirectTo: '/'
+				.state('app.index', {
+					url			: '',
+					templateUrl	: 'views/app/index.html'
+				})
+				.state('app.view', {
+					url			: '/:subdomain/:eventId',
+					templateUrl	: '/views/app/index.html',
+					params 		: {
+						subdomain : { squash: true, value: null }
+					}
 				});
 
 			$locationProvider.html5Mode({
-				enabled: true,
-				requireBase: false
+				enabled		: true,
+				requireBase	: false
 			});
 
 			delete $httpProvider.defaults.headers.common['X-Requested-With'];

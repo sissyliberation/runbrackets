@@ -3,9 +3,28 @@ var request = require('request');
 var router = express.Router();
 
 router.use(function logReq(req, res, next) {
-	console.log((new Date()).toLocaleTimeString(), req.path);
+	var t_url = req.query.tournament_url || "";
+	console.log((new Date()).toLocaleTimeString(), req.path, t_url);
 	next();
-})
+});
+
+router.get('/validateApiKey/', function (req, res) {
+	var api_key = req.query.api_key || CHALLONGE_API_KEY;
+	var tournament_url = req.query.tournament_url;
+	var subdomain = req.query.subdomain;
+
+	if (subdomain) {
+		tournament_url = subdomain + '-' + tournament_url;
+	}
+
+	var url = 'https://api.challonge.com/v1/tournaments/' + tournament_url + '.json?api_key=';
+	url += api_key;
+
+	request.put(url, function (error, response, body) {
+		// 422 should be considered a success because it means we do have authorization to edit the tournament.
+		res.status(response.statusCode == 422 ? 200 : response.statusCode).send(body);
+	});
+});
 
 // LIST ALL TOURNAMENTS
 router.get('/getTournaments/', function (req, res) {
@@ -29,12 +48,29 @@ router.get('/getTournaments/', function (req, res) {
 	});
 });
 
+// GET SINGLE TOURNAMENT
+router.get('/getTournament/', function (req, res) {
+	var api_key = req.query.api_key || CHALLONGE_API_KEY;
+	var tournament_url = req.query.tournament_url;
+	var subdomain = req.query.subdomain;
+
+	if (subdomain) {
+		tournament_url = subdomain + '-' + tournament_url;
+	}
+
+	var url = 'https://api.challonge.com/v1/tournaments/' + tournament_url + '.json?api_key=';
+	url += api_key;
+
+	request.get(url, function (error, response, body) {
+		res.send(body);
+	});
+});
+
 // LIST ALL TOURNAMENT PARTICIPANTS
 router.get('/getTournamentParticipants/', function (req, res) {
 	var api_key = req.query.api_key || CHALLONGE_API_KEY;
 	var tournament_url = req.query.tournament_url;
 	var subdomain = req.query.subdomain;
-	var is_organizer = req.query.is_organizer;
 
 	if (subdomain) {
 		tournament_url = subdomain + '-' + tournament_url;
@@ -75,14 +111,9 @@ router.get('/tournamentAttachments/', function (req, res) {
 
 // LIST ALL TOURNAMENT MATCHES
 router.get('/getMatches/', function (req, res) {
-	var api_key = req.query.api_key;
+	var api_key = req.query.api_key || CHALLONGE_API_KEY;
 	var tournament_url = req.query.tournament_url;
 	var subdomain = req.query.subdomain;
-	var is_organizer = req.query.is_organizer;
-
-	if (is_organizer != true) {
-		api_key = CHALLONGE_API_KEY;
-	}
 
 	if (subdomain) {
 		tournament_url = subdomain + '-' + tournament_url;
@@ -129,16 +160,10 @@ router.post('/postMatchResults/', function (req, res) {
 
 // GET MATCH STATION
 router.get('/getMatchStation/', function (req, res) {
-	var api_key = req.query.api_key;
+	var api_key = req.query.api_key || CHALLONGE_API_KEY;
 	var tournament_url = req.query.tournament_url;
 	var match_id = req.query.match_id;
 	var subdomain = req.query.subdomain;
-
-	var is_organizer = req.query.is_organizer;
-
-	if (is_organizer != true) {
-		api_key = CHALLONGE_API_KEY;
-	}
 
 
 	if (subdomain) {

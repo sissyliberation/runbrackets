@@ -2,10 +2,9 @@
 	'use strict';
 
 	var app = angular.module('app');
-	app.controller('appCtrl', function ($scope, $http, localStorageService, $interval) {
+	app.controller('appCtrl', function ($scope, $http, $state, localStorageService, $interval) {
 		$scope.Math = window.Math;
 
-		$scope.activeTournament = '';
 		$scope.matches = '';
 		$scope.match_ids = {};
 		$scope.currentMatch = {};
@@ -14,253 +13,224 @@
 		$scope.stations = {};
 
 		$scope.is_loading = false;
-		$scope.ready = false;
-
-		$scope.is_organizer = false;
 
 		$scope.tournamentFilters = [{
-			"name": "In Progress",
-			"value": "in_progress"
+			"name"	: "All",
+			"value"	: "all"
 		}, {
-			"name": "Completed",
-			"value": "ended"
+			"name"	: "In Progress",
+			"value"	: "in_progress"
 		}, {
-			"name": "Pending",
-			"value": "ended"
+			"name"	: "Completed",
+			"value"	: "ended"
 		}, {
-			"name": "All",
-			"value": "all"
+			"name"	: "Pending",
+			"value"	: "ended"
 		}];
 
-		$scope.credentials = {
-			'organizer': {
-				'tournament_filter': $scope.tournamentFilters[0]
+		$scope.fields = {
+			'organizer'	: {
+				'api_key'	: null,
+				'subdomain'	: null
 			},
-			'participant': {},
-			'api_key': '',
-			'subdomain': '',
-			'hide_completed': localStorageService.get('hide_completed'),
-			'hide_stations': localStorageService.get('hide_stations'),
-			'hide_unavailable': localStorageService.get('hide_unavailable')
-
-		};
-
-		$scope.getCredentials = function (clicked, type) {
-
-			if (type == 'organizer') {
-				$scope.credentials.organizer.api_key = localStorageService.get('api_key');
-				$scope.credentials.organizer.subdomain = localStorageService.get('subdomain');
-				if (!$scope.credentials.organizer.api_key) {
-					$scope.ready = false;
-				}
-				else {
-					$scope.ready = true;
-					$scope.confirmed = clicked;
-				}
-			}
-			else if (type == 'participant') {
-
-				$scope.credentials.full_challonge_url = localStorageService.get('full_challonge_url');
-				$scope.ready = true;
-				$scope.confirmed = clicked;
-
-				if ($scope.confirmed) {
-					$scope.activateTournament();
-				}
+			'participant'	: {
+				'full_url'	: null
 			}
 		};
 
-		$scope.setCredentials = function (type) {
-
-			if (type == 'organizer') {
-				$scope.is_organizer = true;
-				localStorageService.set('api_key', $scope.credentials.organizer.api_key);
-				localStorageService.set('subdomain', $scope.credentials.organizer.subdomain);
-				$scope.getCredentials(true, 'organizer');
-				$scope.getActiveTournaments();
-			}
-			else if (type == 'participant') {
-				$scope.is_organizer = false;
-
-				localStorageService.set('full_challonge_url', $scope.credentials.full_challonge_url);
-
-				var n = $scope.credentials.full_challonge_url.search("://");
-				if (n) {
-					$scope.credentials.full_challonge_url = $scope.credentials.full_challonge_url.substring(n + 3);
-				}
-
-				var split_slash = $scope.credentials.full_challonge_url.split('/');
-				$scope.credentials.participant.tournament_url = split_slash[split_slash.length - 1];
-
-				var split_dot = $scope.credentials.full_challonge_url.split('.');
-
-				if (split_dot.length > 2) {
-					$scope.credentials.participant.subdomain = split_dot[0];
-				}
-				else {
-					$scope.credentials.participant.subdomain = '';
-				}
-
-				$scope.getCredentials(true, 'participant');
+		$scope.session_data = {
+			'settings' : {
+				'tournament_filter'	: $scope.tournamentFilters[0],
+				'hide_completed'	: null,
+				'hide_stations'		: null,
+				'hide_unavailable'	: null
 			}
 		};
 
-		$scope.hideCompletedMatches = function () {
-			localStorageService.set('hide_completed', $scope.credentials.hide_completed);
-		};
-		$scope.hideStations = function () {
-			localStorageService.set('hide_stations', $scope.credentials.hide_stations);
-		};
-		$scope.hideUnavailableMatches = function () {
-			localStorageService.set('hide_unavailable', $scope.credentials.hide_unavailable);
+		$scope.active_tournament = {
+			'tournament'	: false, // Challonge API response.
+			'domain'		: null,
+			'is_organizer'	: false,
+			'api_params' : {
+				'api_key'			: null,
+				'subdomain'			: null,
+				'tournament_url'	: null
+			}
 		};
 
-		$scope.getActiveTournaments = function (filter) {
+		function getStateParams() {
+			$.extend(true, $scope.active_tournament,
+				{
+					'domain'			: 'challonge',
+					'api_params' : {
+						'subdomain'			: $state.params.subdomain,
+						'tournament_url'	: $state.params.eventId
+					}
+				});
+		}
+
+		function getLocalStorageServiceData() {
+			$.extend(true, $scope.fields, 		localStorageService.get('scope.fields'));
+			$.extend(true, $scope.session_data, localStorageService.get('scope.session_data'));
+		}
+
+		function setLocalStateStorageServiceData() {
+			localStorageService.set('scope.fields', 		$scope.fields);
+			localStorageService.set('scope.session_data', 	$scope.session_data);
+		}
+
+		// Validate the request for Participant viewing.
+		$scope.validateParticipantCriteria = function() {
+			setLocalStateStorageServiceData(); // Persist the user's entered fields.
+
+			try {
+				var a = $('<a>', { href:$scope.fields.participant.full_url } )[0];
+				var domain = a.hostname; // Includes the subdomain, will require a parse otherwise.
+				$scope.active_tournament.api_params.tournament_url	= a.pathname.replace('/', '');
+
+				var hostname_split = domain.split(".");
+				$scope.active_tournament.api_params.subdomain = hostname_split.length > 2 ? hostname_split[0] : null;
+			} catch (e) {
+				console.log('setCredentials: Bad URL:', $scope.fields.participant.full_url, a);
+			}
+
+			$scope.active_tournament.is_organizer = false;
+			$scope.gotoTournament($scope.active_tournament.api_params.subdomain, $scope.active_tournament.api_params.tournament_url);
+		};
+
+		// View the tournaments available to the chosen Organizer.
+		$scope.showAvailableTournaments = function() {
+			$scope.active_tournament.is_organizer = true;
+
+			setLocalStateStorageServiceData(); // Persist the user's entered fields.
+
+			var state = 'in_progress';
+			if ($scope.fields.organizer.tournament_filter && 'value' in $scope.fields.organizer.tournament_filter) {
+				state = $scope.fields.organizer.tournament_filter.value;
+			}
 
 			$scope.is_loading = true;
-
-			var state;
-			if ($scope.credentials.tournament_filter && 'value' in $scope.credentials.tournament_filter) {
-				state = $scope.organizer.credentials.tournament_filter.value;
-			}
-			else {
-				state = 'in_progress';
-			}
-
-			$http.get("query/getTournaments/", {
-				params: {
-					"api_key": $scope.credentials.organizer.api_key,
-					"subdomain": $scope.credentials.organizer.subdomain,
-					"state": state
-				}
-			})
-				.success(function (data, status) {
-					$scope.tournaments = data;
-					$scope.is_loading = false;
+			$http.get('/query/getTournaments/', {
+					params: {
+						"api_key"	: $scope.fields.organizer.api_key,
+						"subdomain"	: $scope.fields.organizer.subdomain,
+						"state"		: state
+					}
 				})
-				.error(function (data, status) {
-					// console.log(data);
-				});
+				.then(
+					function successCallback(response) {
+						$scope.tournaments = response.data.data;
+						$scope.is_loading = false;
+						$scope.confirmed = true;
+					},
+					function errorCallback(response) {
+						console.log(response);
+					});
 		};
 
 		$scope.selectTournament = function (tournament) {
-			$scope.activeTournament = tournament;
-			$scope.activateTournament();
+			$scope.active_tournament.tournament 				= tournament.tournament;
+			$scope.active_tournament.api_params.subdomain 		= tournament.tournament.subdomain;
+			$scope.active_tournament.api_params.tournament_url	= tournament.tournament.url;
+			$scope.active_tournament.api_params.api_key			= $scope.fields.organizer.api_key;
+
+			$scope.active_tournament.is_organizer 				= true;
+			$scope.gotoTournament(tournament.tournament.subdomain, tournament.tournament.url);
 		};
 
 		$scope.activateTournament = function () {
-			if ($scope.is_organizer) {
-				$scope.tournamentAttachments();
-				$scope.getTournamentParticipants();
-			}
-			else {
-				$scope.getTournamentParticipants();
+			if (!$scope.active_tournament.is_organizer) {
+				$scope.getTournament(); // Ensure the Participant page has access to the tournament details like name and progress.
 				$interval(function () {
 					$scope.getTournamentParticipants(false);
 				}, 30000);
 			}
-		}
+			$scope.getTournamentParticipants(true);
+			$scope.confirmed = true;
+		};
 
+		// What is this intended to do?
 		$scope.tournamentAttachments = function () {
-			$http.get("query/tournamentAttachments/", {
-				params: {
-					"api_key": $scope.credentials.organizer.api_key,
-					"subdomain": $scope.credentials.subdomain,
-					"tournament_url": $scope.activeTournament.tournament.url
-				}
+			$http.get("/query/tournamentAttachments/", {
+				params: $scope.active_tournament.api_params
 			});
 		};
 
-		$scope.getTournamentParticipants = function (reload) {
-			console.log(reload);
-			$scope.is_loading = reload;
-
-			var api_key;
-			var subdomain;
-			var tournament_url;
-
-			if ($scope.is_organizer) {
-				api_key = $scope.credentials.organizer.api_key;
-				subdomain = $scope.credentials.organizer.subdomain;
-				tournament_url = $scope.activeTournament.tournament.url;
-			}
-			else {
-				subdomain = $scope.credentials.participant.subdomain;
-				tournament_url = $scope.credentials.participant.tournament_url;
-			}
-			$http.get("query/getTournamentParticipants/", {
-				params: {
-					"api_key": api_key,
-					"subdomain": subdomain,
-					"tournament_url": tournament_url,
-					"is_organizer": $scope.is_organizer
-				}
-			})
-				.success(function (data, status) {
-					var participants = data;
-
-					for (var i = 0; i < participants.length; i++) {
-						$scope.participants[participants[i].participant.id] = participants[i].participant.name;
-					}
-
-					$scope.getTournamentMatches(reload);
+		$scope.getTournament = function() {
+			$http.get("/query/getTournament/", {
+					params: $scope.active_tournament.api_params
 				})
-				.error(function (data, status) {
-					console.log(data);
-				});
+				.then(
+					function successCallback(response) {
+						if (!response.data.errors) {
+							$scope.active_tournament.tournament = response.data.tournament;
+						}
+					},
+					function errorCallback(response) {
+						console.log(response);
+					}
+				);
+		};
+
+		$scope.getTournamentParticipants = function (reload) {
+			$scope.is_loading 	= reload;
+
+			$http.get("/query/getTournamentParticipants/", {
+					params: $scope.active_tournament.api_params
+				})
+				.then(
+					function successCallback(response) {
+						var participants = response.data;
+						for (var i = 0; i < participants.length; i++) {
+							$scope.participants[participants[i].participant.id] = participants[i].participant.name;
+						}
+						$scope.getTournamentMatches(reload);
+					},
+					function errorCallback(response) {
+						console.log(response);
+					}
+				);
 		};
 
 		$scope.getTournamentMatches = function (reload) {
-			$scope.is_loading = reload;
+			$scope.is_loading 	= reload;
 
-			var api_key;
-			var subdomain;
-			var tournament_url;
-
-			if ($scope.is_organizer) {
-				api_key = $scope.credentials.organizer.api_key;
-				subdomain = $scope.credentials.organizer.subdomain;
-				tournament_url = $scope.activeTournament.tournament.url;
-			}
-			else {
-				subdomain = $scope.credentials.participant.subdomain;
-				tournament_url = $scope.credentials.participant.tournament_url;
-			}
-
-			$http.get("query/getMatches/", {
-				params: {
-					"api_key": api_key,
-					"subdomain": subdomain,
-					"tournament_url": tournament_url,
-					"is_organizer": $scope.is_organizer
-				}
-			})
-				.success(function (data, status) {
-					$scope.matches = data;
-					$scope.match_ids = {};
-
-					// store match ids to determine winner
-					angular.forEach($scope.matches, function (value) {
-						$scope.match_ids[value.match.id] = {
-							'id': value.match.identifier,
-							'round': value.match.round
-						};
-
-						if (value.match.attachment_count) {
-							$scope.getMatchStation(value);
-						}
-					});
-
-					$scope.is_loading = false;
+			$http.get("/query/getMatches/", {
+					params: $scope.active_tournament.api_params
 				})
-				.error(function (data, status) {
-					console.log(data);
-				});
+				.then(
+					function successCallback(response) {
+						$scope.matches 		= response.data;
+						$scope.match_ids 	= {};
+
+						// store match ids to determine winner
+						angular.forEach($scope.matches, function (value) {
+							$scope.match_ids[value.match.id] = {
+								'id'	: value.match.identifier,
+								'round'	: value.match.round
+							};
+
+							if (value.match.attachment_count) {
+								$scope.getMatchStation(value);
+							}
+
+							if (value.match.state == 'open' && (value.match.underway_at || value.match.scores_csv != "")) {
+								value.match.state = 'in-progress';
+							}
+
+							value.match.order = $scope.matchOrder(value);
+						});
+						$scope.is_loading = false;
+					},
+					function errorCallback(response) {
+						console.log(response);
+					}
+				);
 		};
 
 		$scope.editMatch = function (match) {
 			// there really isn't anything you can do on a match that is pending, at least now
-			if ($scope.is_organizer && match.match.state != 'pending') {
+			if ($scope.active_tournament.is_organizer && match.match.state != 'pending') {
 				$scope.currentMatch = match;
 				if ($scope.currentMatch.match.scores_csv) {
 					var scores = $scope.currentMatch.match.scores_csv.split('-');
@@ -278,56 +248,33 @@
 
 			var match_station = $scope.currentMatch.match.station || '';
 
-			$http.post("query/postMatchResults/", {
-				data: {
-					"api_key": $scope.credentials.organizer.api_key,
-					"subdomain": $scope.credentials.organizer.subdomain,
-					"tournament_url": $scope.activeTournament.tournament.url,
-					"match_id": $scope.currentMatch.match.id,
-					"match_station": match_station,
-					"score": score,
-					'winner_id': $scope.currentMatch.match.winner_id
-				}
-			})
+			$http.post("/query/postMatchResults/", {
+					data: $.extend(true, $scope.active_tournament.api_params, {
+						"match_id"		: $scope.currentMatch.match.id,
+						"match_station"	: match_station,
+						"score"			: score,
+						'winner_id'		: $scope.currentMatch.match.winner_id
+					})
+				})
 				.then(
-					function (response) {
-						// $scope.setStation($scope.currentMatch.match.id, '');
+					function successCallback(response) {
 						$scope.getTournamentMatches(false);
 						$('#matchModal').modal('hide');
 					},
-					function (response) {
+					function errorCallback(response) {
 						console.log(response);
-					});
+					}
+				);
 		};
 
 		$scope.getMatchStation = function (match) {
-
-			var api_key;
-			var subdomain;
-			var tournament_url;
-
-			if ($scope.is_organizer) {
-				api_key = $scope.credentials.organizer.api_key;
-				subdomain = $scope.credentials.organizer.subdomain;
-				tournament_url = $scope.activeTournament.tournament.url;
-			}
-			else {
-				subdomain = $scope.credentials.participant.subdomain;
-				tournament_url = $scope.credentials.participant.tournament_url;
-			}
-
-
-			$http.get("query/getMatchStation/", {
-				params: {
-					"api_key": api_key,
-					"subdomain": subdomain,
-					"tournament_url": tournament_url,
-					"match_id": match.match.id,
-					"is_organizer": $scope.is_organizer
-				}
-			})
+			$http.get("/query/getMatchStation/", {
+					params: $.extend(true, $scope.active_tournament.api_params, {
+						'match_id'		: match.match.id
+					})
+				})
 				.then(
-					function (response) {
+					function successCallback(response) {
 
 						if (!response.data.match) {
 							return;
@@ -345,49 +292,76 @@
 							}
 						}
 					},
-					function (response) {
+					function errorCallback(response) {
 						console.log(response);
 					});
 		};
 
 		$scope.updateMatchStation = function (match, station) {
-
-			if ($scope.is_organizer) {
-				var match_id = match.match.id;
-				var station_id = '';
-				var get_method = 'POST';
+			if ($scope.active_tournament.is_organizer) {
+				var match_id 	= match.match.id;
+				var station_id 	= '';
+				var get_method 	= 'POST';
 
 
 				if (match.match.station_id) {
-					station_id = match.match.station_id;
-					get_method = 'PUT';
+					station_id 	= match.match.station_id;
+					get_method 	= 'PUT';
 
 					if (!station) {
 						get_method = 'DELETE';
 					}
 				}
 
-				$http.post("query/postMatchStation/", {
-					data: {
-						"api_key": $scope.credentials.organizer.api_key,
-						"subdomain": $scope.credentials.organizer.subdomain,
-						"tournament_url": $scope.activeTournament.tournament.url,
-						"match_id": match_id,
-						"match_station": station,
-						"station_id": station_id,
-						"get_method": get_method
-					}
-				})
+				$http.post("/query/postMatchStation/", {
+						data: $.extend(true, $scope.active_tournament.api_params, {
+							"match_id"		: match_id,
+							"match_station"	: station,
+							"station_id"	: station_id,
+							"get_method"	: get_method
+						})
+					})
 					.then(
-						function (response) {
+						function successCallback(response) {
 							$scope.getMatchStation(match);
 						},
-						function (response) {
+						function errorCallback(response) {
+							console.log(response);
 							alert('Error, sorry. Working on it');
 						});
 
 			}
 		};
+
+		// Verify that the $scope'd api_key will work for the currently active tournament.
+		// Fails fast if the api_key is not defined.
+		$scope.validateApiKey = function (api_key) {
+			if (api_key) {
+				$http.get('/query/validateApiKey/', {
+						params: $.extend({}, $scope.active_tournament.api_params, {
+							"api_key": api_key
+						})
+					})
+					.then(
+						function successCallback(response) {
+							$scope.active_tournament.is_organizer = true;
+							$scope.active_tournament.api_params.api_key = api_key;
+							console.log(response.status, 'api_key is valid : user is the organizer');
+						},
+						function errorCallback(response) {
+							console.log(response.status, 'api_key is invalid : user is NOT the organizer');
+						}
+					);
+			}
+		};
+		
+		$scope.gotoTournament = function(subdomain, tournament_url) {
+			$state.go('app.view', {
+				'subdomain' : subdomain,
+				'eventId' 	: tournament_url })
+				.then($scope.activateTournament);
+		};
+
 
 		$scope.determineRound = function (round) {
 			var place;
@@ -401,10 +375,41 @@
 			return place + round;
 		};
 
-		// init
-		$scope.getCredentials(false, 'organizer');
-		$scope.getCredentials(false, 'participant');
+		// Determine match order by state.
+		// 0: green / success / complete
+		// 1: purple / info / in progress, started
+		// 2: grey / pending / available, not started
+		// 3: white / none / unavailable (one or more participants undetermined)
+		$scope.matchOrder = function(match) {
+			if (match.match.state == 'complete')
+				return 0;
+			if (match.match.state == 'in-progress')
+				return 1;
+			if (match.match.state == 'open') {
+				return 2;
+			}
+			return 3;
+		};
+
+		$scope.updateStoredSession = function() {
+			setLocalStateStorageServiceData();
+		};
+
+		function tryActivateTournament() {
+			$scope.validateApiKey($scope.fields.organizer.api_key);
+			$scope.activateTournament();
+		}
+
+		$scope.$watch('session_data', function() {
+			$scope.updateStoredSession();
+		});
 
 
+		getLocalStorageServiceData();
+		getStateParams(); // Ensure the newest requested tournament is being loaded.
+
+		if ($state.is('app.view')) {
+			tryActivateTournament();
+		}
 	});
 }());

@@ -868,3 +868,13 @@ $dl-horizontal-offset:        $component-offset-horizontal !default;
 $dl-horizontal-breakpoint:    $grid-float-breakpoint !default;
 //** Horizontal line color.
 $hr-border:                   $gray-lighter !default;
+
+
+//== Match Colors
+//
+//##
+
+$match-pending:               none !default;
+$match-open:                  rgba(240, 173, 78, 0.2) !default;
+$match-in-progress:           rgba(91, 192, 222, 0.2) !default;
+$match-complete:              rgba(94, 182, 92, 0.2) !default;

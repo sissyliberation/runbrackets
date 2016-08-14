@@ -1,6 +1,6 @@
 startup.bat
 .sass-cache
-.css.map
+*.css.map
 
 # Dependency directories
 node_modules

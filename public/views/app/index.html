@@ -8,37 +8,37 @@
 
 	<div class="spaced"></div>
 	<ul class="nav nav-tabs">
-		<li class="active"><a data-toggle="tab" ng-click="tab=1">Organizer</a></li>
-		<li><a data-toggle="tab" ng-click="tab=2">Participant</a></li>
+		<li class="active"><a data-toggle="tab" ng-click="tab=1">Participant</a></li>
+		<li><a data-toggle="tab" ng-click="tab=2">Organizer</a></li>
 	</ul>
 
 	<div class="tab-content">
-		<div id="organizer" class="tab-pane fade" ng-if="tab==1" ng-class="{'in active': tab==1}">
+		<div id="participant" class="tab-pane fade" ng-if="tab==1" ng-class="{'in active': tab==1}">
 			<form class="form-credentials">
 				<label for="api_key" class="sr-only">API Key</label>
-				<input ng-model="credentials.organizer.api_key" type="text" id="api_key" class="form-control"
+				<input ng-model="fields.participant.full_url" type="text" id="url" class="form-control"
+					   placeholder="Challonge URL" required autofocus>
+				<div class="spaced text-center">
+					<button ng-disabled="!fields.participant.full_url" class="btn btn-lg btn-primary"
+							ng-click="validateParticipantCriteria();">Let's Go
+					</button>
+				</div>
+			</form>
+		</div>
+		<div id="organizer" class="tab-pane fade" ng-if="tab==2" ng-class="{'in active': tab==2}">
+			<form class="form-credentials">
+				<label for="api_key" class="sr-only">API Key</label>
+				<input ng-model="fields.organizer.api_key" type="text" id="api_key" class="form-control"
 					   placeholder="API Key" required autofocus>
-				<label for="subdomain" class="sr-only">Subdomain</label>
-				<input ng-model="credentials.organizer.subdomain" type="text" id="subdomain" class="form-control"
+				<label for="subdomain" class="sr-only">Subdomain (optional)</label>
+				<input ng-model="fields.organizer.subdomain" type="text" id="subdomain" class="form-control"
 					   placeholder="Subdomain">
 				<p class="muted text-center">
 					Any information given is stored only in your browser, and nowhere else.
 				</p>
 				<div class="spaced text-center">
-					<button ng-disabled="!credentials.organizer.api_key" class="btn btn-lg btn-primary"
-							ng-click="setCredentials('organizer');">Let's Go
-					</button>
-				</div>
-			</form>
-		</div>
-		<div id="participant" class="tab-pane fade" ng-if="tab==2" ng-class="{'in active': tab==2}">
-			<form class="form-credentials">
-				<label for="api_key" class="sr-only">API Key</label>
-				<input ng-model="credentials.full_challonge_url" type="text" id="url" class="form-control"
-					   placeholder="Challonge URL" required autofocus>
-				<div class="spaced text-center">
-					<button ng-disabled="!credentials.full_challonge_url" class="btn btn-lg btn-primary"
-							ng-click="setCredentials('participant');">Let's Go
+					<button ng-disabled="!fields.organizer.api_key" class="btn btn-lg btn-primary"
+							ng-click="showAvailableTournaments();">Let's Go
 					</button>
 				</div>
 			</form>
@@ -46,12 +46,12 @@
 	</div>
 </div>
 
-<div id="chooseTournament" class="container" ng-if="is_organizer && confirmed && !activeTournament">
+<div id="chooseTournament" class="container" ng-if="confirmed && active_tournament.is_organizer && !active_tournament.tournament">
 	<h1 class="text-center">Choose your Tournament</h1>
 
 	<div class="text-center">
-		<select class="form-control form-small inline input-sm" ng-model="credentials.organizer.tournament_filter"
-				ng-options="filter.name for filter in tournamentFilters" ng-change="getActiveTournaments()">
+		<select class="form-control form-small inline input-sm" ng-model="session_data.settings.tournament_filter"
+				ng-options="filter.name for filter in tournamentFilters" ng-change="showAvailableTournaments();">
 		</select>
 	</div>
 
@@ -79,94 +79,91 @@
 	</div>
 </div>
 
-<div id="activeTournament" layout="column" flex ng-if="!is_loading && confirmed && (activeTournament || !is_organizer)">
+<div id="activeTournament" layout="column" flex ng-if="!is_loading && confirmed && (active_tournament.tournament || !active_tournament.is_organizer)">
 
 	<div>
 		<h1 class="text-center">
-			<a href="{{activeTournament.tournament.full_challonge_url}}" target="_blank">
-				{{activeTournament.tournament.name}}
+			<a href="{{active_tournament.tournament.full_challonge_url}}" target="_blank">
+				{{active_tournament.tournament.name}}
 			</a>
 		</h1>
+		<div class="entrants">{{ active_tournament.tournament.participants_count }} entrants</div>
 		<div class="progress">
-			<div class="determinate" style="width: {{ activeTournament.tournament.progress_meter }}%"></div>
+			<!--<div class="determinate" style="width: {{ active_tournament.tournament.progress_meter }}%">
+				{{ activeTournament.tournament.progress_meter + '%'}}
+			</div>-->
+			<div class="progress-bar"
+				 role="progressbar"
+				 aria-valuenow="{{ active_tournament.tournament.progress_meter }}"
+				 aria-valuemin="0" aria-valuemax="100"
+				 ng-style="{ width : (active_tournament.tournament.progress_meter + '%') }">
+			</div>
 		</div>
 
 	</div>
 
-	<div class="row">
-		<div class="col-sm-3">
-			hide completed matches:
-			<input type="checkbox" ng-model="credentials.hide_completed" ng-change="hideCompletedMatches()"
-				   class="ng-pristine ng-untouched ng-valid ng-empty">
-		</div>
-		<div class="col-sm-3 col-md-3">
-			hide unavailable:
-			<input type="checkbox" ng-model="credentials.hide_unavailable" ng-change="hideUnavailableMatches()"
-				   class="ng-pristine ng-untouched ng-valid ng-empty">
-		</div>
-		<div class="col-sm-3 col-md-3 col-md-push-3">
-			hide stations:
-			<input type="checkbox" ng-model="credentials.hide_stations" ng-change="hideStations()"
-				   class="ng-pristine ng-untouched ng-valid ng-empty">
-		</div>
+	<div id="match-settings">
+		<label class="checkbox-inline"><input type="checkbox" ng-model="session_data.settings.hide_completed">Hide Completed</label>
+		<label class="checkbox-inline"><input type="checkbox" ng-model="session_data.settings.hide_unavailable">Hide Unavailable</label>
+		<label class="checkbox-inline"><input type="checkbox" ng-model="session_data.settings.hide_stations">Hide Stations</label>
 	</div>
 
 	<div layout="row">
 		<table id="matches-table" class="table table-hover">
 			<thead>
 			<tr>
-				<th style="width: 20%;">
-					Match (round)
+				<th class="col-sm-1">
+					Match
 				</th>
-				<th>
+				<th class="col-sm-5">
 					Player 1
 				</th>
-				<th>
+				<th class="col-sm-5">
 					Player 2
 				</th>
-				<th style="width: 20%;" ng-hide="credentials.hide_stations">
+				<th class="col-sm-1" ng-hide="session_data.settings.hide_stations">
 					Station
 				</th>
 			</tr>
 			</thead>
 			<tbody>
-
-			<tr ng-repeat="match in matches"
-				ng-class="{'info': match.match.state=='open' && (match.match.underway_at || match.match.scores_csv), 'active': match.match.state=='open' && !match.match.underway_at, 'error': match.match.state=='pending', 'success': match.match.state=='complete'}"
-				ng-hide="(credentials.hide_completed && match.match.state=='complete') || (credentials.hide_unavailable && match.match.state=='pending')"
+			<tr ng-repeat="match in matches | orderBy:['match.order', 'match.suggested_play_order']"
+				class="match-{{match.match.state}}"
+				ng-hide="(session_data.settings.hide_completed && match.match.state=='complete') || (session_data.settings.hide_unavailable && match.match.state=='pending')"
 				ng-click="editMatch(match)">
 				<th scope="row">
 					{{match.match.identifier}} ({{ determineRound(match.match.round) }})
 				</th>
 				<td ng-class="{'bold':match.match.winner_id && match.match.winner_id == match.match.player1_id}">
-            <span class="player" ng-if="participants[match.match.player1_id]">
-              {{ participants[match.match.player1_id] }}
-            </span>
-            <span ng-if="!participants[match.match.player1_id] && Math.abs(match.match.round) >= Math.abs(match_ids[match.match.player1_prereq_match_id].round)">
-              {{ 'Winner of ' + match_ids[match.match.player1_prereq_match_id].id }}
-            </span>
-            <span ng-if="!participants[match.match.player1_id] && Math.abs(match.match.round) < Math.abs(match_ids[match.match.player1_prereq_match_id].round)">
-              {{ 'Loser of ' + match_ids[match.match.player1_prereq_match_id].id }}
-            </span>
+						<span class="player" ng-if="participants[match.match.player1_id]">
+						  {{ participants[match.match.player1_id] }}
+						</span>
+						<span ng-if="!participants[match.match.player1_id] && Math.abs(match.match.round) >= Math.abs(match_ids[match.match.player1_prereq_match_id].round)">
+						  {{ 'Winner of ' + match_ids[match.match.player1_prereq_match_id].id }}
+						</span>
+						<span ng-if="!participants[match.match.player1_id] && Math.abs(match.match.round) < Math.abs(match_ids[match.match.player1_prereq_match_id].round)">
+						  {{ 'Loser of ' + match_ids[match.match.player1_prereq_match_id].id }}
+						</span>
 				</td>
 				<td ng-class="{'bold':match.match.winner_id && match.match.winner_id == match.match.player2_id}">
-            <span class="player" ng-if="participants[match.match.player2_id]">
-              {{ participants[match.match.player2_id] }}
-            </span>
-            <span ng-if="!participants[match.match.player2_id] && Math.abs(match.match.round) >= Math.abs(match_ids[match.match.player2_prereq_match_id].round)">
-              {{ 'Winner of ' + match_ids[match.match.player2_prereq_match_id].id }}
-            </span>
-            <span ng-if="!participants[match.match.player2_id] && Math.abs(match.match.round) < Math.abs(match_ids[match.match.player2_prereq_match_id].round)">
-              {{ 'Loser of ' + match_ids[match.match.player2_prereq_match_id].id }}
-            </span>
-				<td ng-hide="credentials.hide_stations">
-					<input ng-if="is_organizer" ng-click="$event.stopPropagation()" placeholder="station"
-						   class="form-control input-sm" ng-model="match.match.station"
+						<span class="player" ng-if="participants[match.match.player2_id]">
+						  {{ participants[match.match.player2_id] }}
+						</span>
+						<span ng-if="!participants[match.match.player2_id] && Math.abs(match.match.round) >= Math.abs(match_ids[match.match.player2_prereq_match_id].round)">
+						  {{ 'Winner of ' + match_ids[match.match.player2_prereq_match_id].id }}
+						</span>
+						<span ng-if="!participants[match.match.player2_id] && Math.abs(match.match.round) < Math.abs(match_ids[match.match.player2_prereq_match_id].round)">
+						  {{ 'Loser of ' + match_ids[match.match.player2_prereq_match_id].id }}
+						</span>
+				</td>
+				<td ng-hide="session_data.settings.hide_stations" class="text-center">
+					<input ng-if="active_tournament.is_organizer" ng-click="$event.stopPropagation()" placeholder="station"
+						   class="form-control input-sm text-center station" ng-model="match.match.station"
 						   ng-change="updateMatchStation(match, match.match.station)"
-						   ng-model-options="{debounce:1000}"/>
-            <span ng-if="!is_organizer">
-              {{match.match.station}}
-            </span>
+						   ng-model-options="{debounce:300}"/>
+						<span ng-if="!active_tournament.is_organizer" class="station">
+						  {{match.match.station}}
+						</span>
 				</td>
 			</tr>
 			</tbody>
