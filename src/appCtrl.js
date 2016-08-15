@@ -124,7 +124,7 @@
         state = $scope.credentials.organizer.tournament_filter.value;
       }
 
-      $http.get("getTournaments/", {
+      $http.get("/query/getTournaments/", {
         params: {
           "api_key" : $scope.credentials.organizer.api_key,
           "subdomain" : $scope.credentials.organizer.subdomain,
@@ -160,7 +160,7 @@
     }
 
     $scope.tournamentAttachments = function() {
-      $http.get("tournamentAttachments/", {
+      $http.get("/query/tournamentAttachments/", {
         params: {
           "api_key" : $scope.credentials.organizer.api_key,
           "subdomain" : $scope.credentials.subdomain,
@@ -185,7 +185,7 @@
         subdomain      = $scope.credentials.participant.subdomain;
         tournament_url = $scope.credentials.participant.tournament_url;
       }
-      $http.get("getTournamentParticipants/", {
+      $http.get("/query/getTournamentParticipants/", {
         params: {
           "api_key"        : api_key,
           "subdomain"      : subdomain,
@@ -198,7 +198,7 @@
           var participants = data.data;
 
           for(var i = 0; i < participants.length; i++) {
-            $scope.participants[participants[i].participant.id] = participants[i].participant.name || participants[i].participant.username || participants[i].participant.display_name;
+            $scope.participants[participants[i].participant.id] = participants[i].participant.display_name || participants[i].participant.username || participants[i].participant.name;
           }
 
           $scope.getTournamentMatches(reload);
@@ -225,7 +225,7 @@
         tournament_url = $scope.credentials.participant.tournament_url;
       }
 
-      $http.get("getMatches/", {
+      $http.get("/query/getMatches/", {
         params: {
           "api_key"        : api_key,
           "subdomain"      : subdomain,
@@ -282,7 +282,7 @@
 
       var match_station = $scope.currentMatch.match.station || '';
 
-      $http.post("postMatchResults/", {
+      $http.post("/query/postMatchResults/", {
         data: {
           "api_key" : $scope.credentials.organizer.api_key,
           "subdomain" : $scope.credentials.organizer.subdomain,
@@ -320,7 +320,7 @@
       }
 
 
-      $http.get("getMatchStation/", {
+      $http.get("/query/getMatchStation/", {
         params: {
           "api_key"        : api_key,
           "subdomain"      : subdomain,
@@ -369,7 +369,7 @@
           }
         }
 
-        $http.post("postMatchStation/", {
+        $http.post("/query/postMatchStation/", {
           data: {
             "api_key" : $scope.credentials.organizer.api_key,
             "subdomain" : $scope.credentials.organizer.subdomain,
