@@ -1,39 +1,56 @@
 (function () {
   'use strict';
   
-  angular.module('app',['ngAnimate', 'ngRoute', 'LocalStorageModule'])
-  .config(['$routeProvider', function($routeProvider) {
-    $routeProvider.when('/', {
-        templateUrl: 'views/landing.html'
+  angular.module('app', ['ngAnimate', 'ui.router', 'ngRoute', 'LocalStorageModule'])
+    .config(function($urlRouterProvider, $stateProvider, $locationProvider, $httpProvider) {
+      $urlRouterProvider.otherwise('/');
+
+      $stateProvider
+        .state('home', {
+          url: '/',
+          templateUrl: 'views/landing.html'
+        })
+        .state('about', {
+          url: '/about',
+          templateUrl: 'views/about.html'
+        })
+        .state('contact', {
+          url: '/contact',
+          templateUrl: 'views/contact.html'
+        })
+        .state('app', {
+          abstract: true,
+          url: '/app',
+          templateUrl: '<div ui-view></div>',
+          controller: 'appCtrl'
+        })
+        .state('app.index', {
+          url: '',
+          templateUrl: 'views/app/index.html'
+        })
+        .state('app.view', {
+          url: '/:subdomain/:eventId',
+          templateUrl: '/views/app/index.html',
+          params: {
+            subdomain: {squash: true, value: null}
+          }
+        });
+
+      $locationProvider.html5Mode({
+        enabled: true,
+        requireBase: false
+      });
+
+      delete $httpProvider.defaults.headers.common['X-Requested-With'];
+      $httpProvider.defaults.useXDomain = true;
+      $httpProvider.defaults.headers.post['Accept'] = 'application/json, text/javascript';
+      $httpProvider.defaults.headers.post['Content-Type'] = 'application/json; charset=utf-8';
+      $httpProvider.defaults.headers.common['Accept'] = '*';
     })
-    .when('/about', {
-      templateUrl: 'views/about.html'
-    })
-    .when('/contact', {
-      templateUrl: 'views/contact.html'
-    })
-    .when('/app', {
-      templateUrl: 'views/app.html',
-      controller: 'appCtrl'
-    })
-    .otherwise({
-        redirectTo: '/'
+    .config(function(localStorageServiceProvider) {
+      localStorageServiceProvider
+        .setPrefix('challonge');
     });
-  }])
-  .config(['$httpProvider',function ($httpProvider) {
- 
-   delete $httpProvider.defaults.headers.common['X-Requested-With'];
-    $httpProvider.defaults.useXDomain = true;
-    $httpProvider.defaults.headers.post['Accept'] = 'application/json, text/javascript';
-    $httpProvider.defaults.headers.post['Content-Type'] = 'application/json; charset=utf-8';
-    $httpProvider.defaults.headers.common['Accept'] = '*';
-
-  }])
-  .config(function (localStorageServiceProvider) {
-    localStorageServiceProvider
-      .setPrefix('challonge');
-  });
-
 })();
 
 
