@@ -18,7 +18,7 @@
     "nodemon": "^1.9.2"
   },
   "scripts": {
-    "build-css": "node-sass --include-path scss scss/main.scss css/main.css",
+    "build-css": "node-sass --include-path scss scss/main.scss public/css/main.css",
     "watch-css": "nodemon -e scss -x \"npm run build-css\""
   }
 }

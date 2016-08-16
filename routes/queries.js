@@ -12,7 +12,7 @@ router.use(function logRequest(req, res, next) {
 
 // Validate the user provided API key to see if the user is the event organizer.
 // 200 : User is the organizer.
-// XXX : User is not the organizer.
+// 401 : User is not the organizer.
 router.get('/validateApiKey', function (req, res) {
   var api_key = req.query.api_key;
   var tournament_url = req.query.tournament_url;
