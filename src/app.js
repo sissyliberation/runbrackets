@@ -30,9 +30,11 @@
 
   }])
   .config(function (localStorageServiceProvider) {
-    localStorageServiceProvider
-      .setPrefix('challonge');
-  });
+    localStorageServiceProvider.setPrefix('challonge');
+  })
+  .config(['$compileProvider', function ($compileProvider) {
+    $compileProvider.debugInfoEnabled(false);
+  }]);
 
 })();
 
