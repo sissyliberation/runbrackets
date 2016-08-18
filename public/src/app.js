@@ -8,25 +8,25 @@
       $stateProvider
         .state('home', {
           url: '/',
-          templateUrl: 'views/landing.html'
+          templateUrl: '/views/landing.html'
         })
         .state('about', {
           url: '/about',
-          templateUrl: 'views/about.html'
+          templateUrl: '/views/about.html'
         })
         .state('contact', {
           url: '/contact',
-          templateUrl: 'views/contact.html'
+          templateUrl: '/views/contact.html'
         })
         .state('app', {
           abstract: true,
           url: '/app',
-          templateUrl: '<div ui-view></div>',
+          template: '<div ui-view></div>',
           controller: 'appCtrl'
         })
         .state('app.index', {
           url: '',
-          templateUrl: 'views/app/index.html'
+          templateUrl: '/views/app/index.html'
         })
         .state('app.view', {
           url: '/:subdomain/:eventId',
@@ -50,7 +50,10 @@
     .config(function(localStorageServiceProvider) {
       localStorageServiceProvider
         .setPrefix('challonge');
-    });
+    })
+    .config(['$compileProvider', function ($compileProvider) {
+      $compileProvider.debugInfoEnabled(false);
+    }]);
 })();
 
 
