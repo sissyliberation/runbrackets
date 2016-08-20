@@ -151,7 +151,7 @@
             <!-- <input ng-if="is_organizer" ng-click="$event.stopPropagation()" placeholder="station" class="form-control input-sm station" ng-model="match.match.station" ng-change="updateMatchStation(match, match.match.station)" ng-model-options="{debounce:300}"/> -->
 
             <select ng-if="is_organizer && (match.match.order == 1 || match.match.order == 2)" data-ng-init="match.match.station" ng-model="match.match.station" class="form-control station input-sm"  ng-change="updateMatchStation(match, match.match.station)">
-              <option class="form-control"  ng-repeat="station in stations | orderBy: station.name" value="{{station.name}}" 
+              <option class="form-control"  ng-repeat="station in stations | orderBy: ['name.length','name']" value="{{station.name}}" 
               ng-if="station.match == match.match.id || !station.id"
               >{{station.name}}</option>
             </select>
@@ -234,34 +234,9 @@
       </div>
       <div class="modal-body">
 
-<!--         <ul class="list-group">
-          <li class="list-group-item" ng-repeat="station in stations | orderBy: station.name">
-            
-            {{station.name}}
-            <span class="pull-right" >
-              <span ng-if="!station.id">
-                available
-              </span>
-              <span ng-if="station.id">
-                in use
-              </span
-
-
-            </span> 
-          </li>
-        </ul> -->
-
         <table class="table table-condensed">
           <tr class="text-center" ng-repeat="station in stations | orderBy: ['name.length','name']" ng-class="{'active': station.id}">
             <td> {{station.name}} </td>
-<!--             <td>
-                            <span ng-if="!station.id">
-                available
-              </span>
-              <span ng-if="station.id">
-                in use
-              </span
-            </td> -->
             <td style="width: 10%;">
               <a  class="fa fa-close removeStation" ng-click="deleteStation(station.name);">
                 <i  aria-hidden="true"></i>
@@ -269,7 +244,6 @@
             </td>
           </tr>
         </table>
-        
 
         <input class="form-control input-sm" ng-model="newStationName">
         <button class="btn btn-primary" ng-click="addStation();" ng-disabled="!newStationName">Add Station</button>
