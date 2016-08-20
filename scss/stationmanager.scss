@@ -1,9 +1,24 @@
-#activeTournament #settings {
-	font-size: 0.5em;
-    padding: 0.5em;
-    color: $silver!important;
+#activeTournament {
+
+  #settings {
+    font-size: 0.5em;
+      padding: 0.5em;
+      color: $silver!important;
+
+      &:hover {
+        text-decoration: none;
+      }
+  }
+}
+
+#stationManager {
+  .removeStation {
+    color: $silver;
 
     &:hover {
-    	text-decoration: none;
+      color: $red;
+      text-decoration: none;
+      cursor: pointer;
     }
+  }
 }

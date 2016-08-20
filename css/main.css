@@ -6683,6 +6683,13 @@ input[type="checkbox"],
   #activeTournament #settings:hover {
     text-decoration: none; }
 
+#stationManager .removeStation {
+  color: #bdc3c7; }
+  #stationManager .removeStation:hover {
+    color: #c0392b;
+    text-decoration: none;
+    cursor: pointer; }
+
 /* Sticky footer styles
 -------------------------------------------------- */
 html {

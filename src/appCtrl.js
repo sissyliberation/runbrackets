@@ -127,16 +127,28 @@
       $scope.stations.push({'name': $scope.newStationName});
       localStorageService.set('station-' + $scope.newStationName, $scope.newStationName);
       $scope.newStationName = '';
+      // $scope.$apply();
 
     };
 
 
 
-    $scope.deleteStation = function(station_name, index) {
+    $scope.deleteStation = function(station_name) {
 
       localStorageService.remove('station-' + station_name);
 
-      $scope.tournaments = $scope.stations.splice(index, 1);
+      var station_index;
+
+      for(var i = 0; i < $scope.stations.length; ++i) {
+        if ($scope.stations[i].name == station_name) {
+          station_index = i;
+        }
+
+      }
+
+      if (station_index) {
+        $scope.stations.splice(station_index, 1);
+      }
 
     };
 

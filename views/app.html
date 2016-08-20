@@ -51,6 +51,8 @@
     <div class="col-sm-12 col-md-6 col-md-push-3">
       <ul class="list-group" ng-if="tournaments.length">
         <li class="list-group-item" ng-repeat="tournament in tournaments" ng-click="selectTournament(tournament);">
+
+          <span ng-if="credentials.organizer.subdomain"> {{credentials.organizer.subdomain}} / </span>
           
           {{tournament.tournament.name}}
           <span class="pull-right link" >
@@ -232,7 +234,7 @@
       </div>
       <div class="modal-body">
 
-        <ul class="list-group">
+<!--         <ul class="list-group">
           <li class="list-group-item" ng-repeat="station in stations | orderBy: station.name">
             
             {{station.name}}
@@ -244,11 +246,29 @@
                 in use
               </span
 
-              <a target="_blank"><i class="fa fa-close" aria-hidden="true" ng-click="deleteStation(station.name, $index);"></i>
-              </a>
+
             </span> 
           </li>
-        </ul>
+        </ul> -->
+
+        <table class="table table-condensed">
+          <tr class="text-center" ng-repeat="station in stations | orderBy: ['name.length','name']" ng-class="{'active': station.id}">
+            <td> {{station.name}} </td>
+<!--             <td>
+                            <span ng-if="!station.id">
+                available
+              </span>
+              <span ng-if="station.id">
+                in use
+              </span
+            </td> -->
+            <td style="width: 10%;">
+              <a  class="fa fa-close removeStation" ng-click="deleteStation(station.name);">
+                <i  aria-hidden="true"></i>
+              </a>
+            </td>
+          </tr>
+        </table>
         
 
         <input class="form-control input-sm" ng-model="newStationName">
