@@ -6690,6 +6690,17 @@ input[type="checkbox"],
     text-decoration: none;
     cursor: pointer; }
 
+#stationManager #addStationInput {
+  max-width: 75%; }
+  @media (max-width: 768px) {
+    #stationManager #addStationInput {
+      max-width: 100%; } }
+
+@media (max-width: 768px) {
+  #stationManager #addStationBtn {
+    margin-top: 20px;
+    float: initial !important; } }
+
 /* Sticky footer styles
 -------------------------------------------------- */
 html {

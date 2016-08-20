@@ -21,4 +21,19 @@
       cursor: pointer;
     }
   }
+
+  #addStationInput {
+    max-width: 75%;
+    @media(max-width:768px) {
+      max-width: 100%;
+    }
+  }
+
+  #addStationBtn {
+    @media(max-width:768px) {
+      margin-top: 20px;
+      float: initial !important;
+    }
+  }
+
 }

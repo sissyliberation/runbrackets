@@ -245,8 +245,12 @@
           </tr>
         </table>
 
-        <input class="form-control input-sm" ng-model="newStationName">
-        <button class="btn btn-primary" ng-click="addStation();" ng-disabled="!newStationName">Add Station</button>
+        <form class="form-inline"  ng-submit="addStation();">
+          <div class="input-group text-center" style="width: 100%;">
+            <input type="text" class="form-control" ng-model="newStationName" id="addStationInput">
+            <button class="btn btn-primary pull-right" type="button" ng-disabled="!newStationName" id="addStationBtn">Add Station</button>
+          </div>
+        </form>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
