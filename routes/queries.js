@@ -212,7 +212,7 @@ router.post('/postMatchStation/', function (req, res) {
   request({
     url: url, method: get_method, json: {
       "match_attachment": {
-        "description": 'station ' + match_station
+        "description": 'station-' + match_station
       }
     }
   }, function (error, response, body) {

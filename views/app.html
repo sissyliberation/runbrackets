@@ -148,15 +148,18 @@
           <td ng-hide="credentials.hide_stations" ng-click="$event.stopPropagation()"> 
             <!-- <input ng-if="is_organizer" ng-click="$event.stopPropagation()" placeholder="station" class="form-control input-sm station" ng-model="match.match.station" ng-change="updateMatchStation(match, match.match.station)" ng-model-options="{debounce:300}"/> -->
 
-            <select ng-if="is_organizer && (match.match.order == 1 || match.match.order == 2)" data-ng-init="match.match.station" ng-model="match.match.station" class="form-control station"  ng-change="updateMatchStation(match, match.match.station)">
-              <option class="form-control"  ng-repeat="station in stations" value="{{station.name}}" 
+            <select ng-if="is_organizer && (match.match.order == 1 || match.match.order == 2)" data-ng-init="match.match.station" ng-model="match.match.station" class="form-control station input-sm"  ng-change="updateMatchStation(match, match.match.station)">
+              <option class="form-control"  ng-repeat="station in stations | orderBy: station.name" value="{{station.name}}" 
               ng-if="station.match == match.match.id || !station.id"
               >{{station.name}}</option>
             </select>
 
             <div class="text-center" ng-if="is_organizer && match.match.order != 1 && match.match.order != 2">
-               - 
+              - 
+
+               {{match.match.attachment_count}} -  {{match.match.station}} - {{match.match.station_id}}
             </div>
+
 
             <span ng-if="!is_organizer" class="station">
               {{match.match.station}}
@@ -228,9 +231,25 @@
         <h4 class="modal-title">Station Manager</h4>
       </div>
       <div class="modal-body">
-        <div ng-repeat="station in stations">
-          {{station}}
-        </div>
+
+        <ul class="list-group">
+          <li class="list-group-item" ng-repeat="station in stations | orderBy: station.name">
+            
+            {{station.name}}
+            <span class="pull-right" >
+              <span ng-if="!station.id">
+                available
+              </span>
+              <span ng-if="station.id">
+                in use
+              </span
+
+              <a target="_blank"><i class="fa fa-close" aria-hidden="true" ng-click="deleteStation(station.name, $index);"></i>
+              </a>
+            </span> 
+          </li>
+        </ul>
+        
 
         <input class="form-control input-sm" ng-model="newStationName">
         <button class="btn btn-primary" ng-click="addStation();" ng-disabled="!newStationName">Add Station</button>

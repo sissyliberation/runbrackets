@@ -13,8 +13,11 @@
     $scope.currentMatch = {};
 
     $scope.participants = {};
-    $scope.stations = [];
     $scope.newStationName = '';
+
+    $scope.stations = [];
+
+
 
     // $scope.
 
@@ -50,6 +53,7 @@
       'hide_stations': localStorageService.get('hide_stations'),
 
     };
+
 
     $scope.getCredentials = function(clicked, type) {
 
@@ -121,16 +125,16 @@
     $scope.addStation = function() {
 
       $scope.stations.push({'name': $scope.newStationName});
+      localStorageService.set('station-' + $scope.newStationName, $scope.newStationName);
       $scope.newStationName = '';
 
     };
 
-    $scope.deleteStation = function(index) {
 
-      var station = $scope.stations[index];
-      if(station.id) {
 
-      }
+    $scope.deleteStation = function(station_name, index) {
+
+      localStorageService.remove('station-' + station_name);
 
       $scope.tournaments = $scope.stations.splice(index, 1);
 
@@ -303,6 +307,16 @@
 
       var match_station = $scope.currentMatch.match.station || '';
 
+      if($scope.currentMatch.match.winner_id) {
+
+            angular.forEach($scope.stations, function(station) {
+              if (station.name == $scope.currentMatch.match.station) {
+                delete station.id;
+                delete station.match;
+              }
+            });
+          }
+
       $http.post("/query/postMatchResults/", {
         data: {
           "api_key" : $scope.credentials.organizer.api_key,
@@ -318,13 +332,13 @@
         function(response) {
 
           var finished = $scope.currentMatch.match.winner_id ? true : false;
-          console.log(finished);
+
+          $scope.getStoredStations();
           
           $scope.getTournamentMatches(false);
+
           $('#matchModal').modal('hide');
-          if($scope.currentMatch.match.winner_id) {
-            $scope.updateMatchStation($scope.currentMatch, '', finished);
-          }
+
         }, 
         function(response) {
           console.log(response);
@@ -369,17 +383,27 @@
           var id = '';
 
           for(var i = 0; i < match_data.attachment_count; ++i) {
-            if(match_data.attachments[i].match_attachment.description.substring(0,8) == 'station ') {
+            if(match_data.attachments[i].match_attachment.description.substring(0,8) == 'station-') {
               match.match.station = match_data.attachments[i].match_attachment.description.substring(8);
               match.match.station_id = match_data.attachments[i].match_attachment.id;
 
-              if (!(match.match.station in $scope.stations)) {
-                $scope.stations.push({
-                  'id': match.match.station_id,
-                  'name': match.match.station,
-                  'match': match.match.id
-                });
-              }
+
+
+              // if (!(match.match.station in $scope.stations)) {
+              //   $scope.stations.push({
+              //     'id': match.match.station_id,
+              //     'name': match.match.station,
+              //     'match': match.match.id
+              //   });
+              // }
+
+              angular.forEach($scope.stations, function(station) {
+                if (station.name == match.match.station) {
+                  station.id = match.match.station_id;
+                  station.match = match.match.id;
+                }
+              });
+
             }
           }
         }, 
@@ -408,11 +432,18 @@
 
          
         }
-         if(!station || finished) {
-            get_method = 'DELETE';
-          }
+        if(!station || finished) {
 
-        console.log(get_method);
+          angular.forEach($scope.stations, function(station) {
+            if (station.name == $scope.currentMatch.match.station) {
+              delete station.id;
+              delete station.match;
+            }
+          });
+          
+
+          get_method = 'DELETE';
+        }
 
         $http.post("/query/postMatchStation/", {
           data: {
@@ -471,6 +502,32 @@
       else {
         return 3;
       }
+    };
+
+
+    // get saved stations
+    var lsKeys = localStorageService.keys();
+
+    for(var i = 0; i < lsKeys.length; ++i) {
+      console.log(lsKeys[i]);
+      if (lsKeys[i].substring(0,8) == 'station-') {
+        $scope.stations.push({'name':lsKeys[i].substring(8)});
+
+      }
+    }
+
+    $scope.getStoredStations = function() {
+      var lsKeys = localStorageService.keys();
+      $scope.stations = [];
+
+      for(var i = 0; i < lsKeys.length; ++i) {
+        console.log(lsKeys[i]);
+        if (lsKeys[i].substring(0,8) == 'station-') {
+          $scope.stations.push({'name':lsKeys[i].substring(8)});
+
+        }
+      }
+
     };
 
     // init
