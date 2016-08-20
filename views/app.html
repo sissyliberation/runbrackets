@@ -145,16 +145,18 @@
             <span ng-if="!participants[match.match.player2_id] && Math.abs(match.match.round) < Math.abs(match_ids[match.match.player2_prereq_match_id].round)">
               {{ 'Loser of ' + match_ids[match.match.player2_prereq_match_id].id }}
             </span>
-          <td ng-hide="credentials.hide_stations"> 
+          <td ng-hide="credentials.hide_stations" ng-click="$event.stopPropagation()"> 
             <!-- <input ng-if="is_organizer" ng-click="$event.stopPropagation()" placeholder="station" class="form-control input-sm station" ng-model="match.match.station" ng-change="updateMatchStation(match, match.match.station)" ng-model-options="{debounce:300}"/> -->
 
-
-            <select  data-ng-init="match.match.station" ng-model="match.match.station" class="form-control station" ng-click="$event.stopPropagation()" ng-change="updateMatchStation(match, match.match.station)">
+            <select ng-if="is_organizer && (match.match.order == 1 || match.match.order == 2)" data-ng-init="match.match.station" ng-model="match.match.station" class="form-control station"  ng-change="updateMatchStation(match, match.match.station)">
               <option class="form-control"  ng-repeat="station in stations" value="{{station.name}}" 
               ng-if="station.match == match.match.id || !station.id"
               >{{station.name}}</option>
             </select>
 
+            <div class="text-center" ng-if="is_organizer && match.match.order != 1 && match.match.order != 2">
+               - 
+            </div>
 
             <span ng-if="!is_organizer" class="station">
               {{match.match.station}}
@@ -229,6 +231,9 @@
         <div ng-repeat="station in stations">
           {{station}}
         </div>
+
+        <input class="form-control input-sm" ng-model="newStationName">
+        <button class="btn btn-primary" ng-click="addStation();" ng-disabled="!newStationName">Add Station</button>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>

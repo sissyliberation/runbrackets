@@ -14,8 +14,9 @@
 
     $scope.participants = {};
     $scope.stations = [];
+    $scope.newStationName = '';
 
-    // $scope.stations.push({'name':'blah blah'});
+    // $scope.
 
     $scope.is_loading = false;
     $scope.ready = false;
@@ -115,6 +116,24 @@
     };
     $scope.hideStations = function() {
       localStorageService.set('hide_stations', $scope.credentials.hide_stations);
+    };
+
+    $scope.addStation = function() {
+
+      $scope.stations.push({'name': $scope.newStationName});
+      $scope.newStationName = '';
+
+    };
+
+    $scope.deleteStation = function(index) {
+
+      var station = $scope.stations[index];
+      if(station.id) {
+
+      }
+
+      $scope.tournaments = $scope.stations.splice(index, 1);
+
     };
 
     $scope.getActiveTournaments = function(filter) {
@@ -297,8 +316,15 @@
       })
       .then(
         function(response) {
+
+          var finished = $scope.currentMatch.match.winner_id ? true : false;
+          console.log(finished);
+          
           $scope.getTournamentMatches(false);
           $('#matchModal').modal('hide');
+          if($scope.currentMatch.match.winner_id) {
+            $scope.updateMatchStation($scope.currentMatch, '', finished);
+          }
         }, 
         function(response) {
           console.log(response);
@@ -362,12 +388,12 @@
       });
     };
 
-    $scope.updateMatchStation = function(match, station) {
+    $scope.updateMatchStation = function(match, station, finished) {
 
-      console.log('--');
+      // console.log('--');
 
-      console.log(match);
-      console.match(station);
+      // console.log(match);
+      // console.log(station);
 
       if ($scope.is_organizer) {
         var match_id = match.match.id;
@@ -376,13 +402,17 @@
 
 
         if(match.match.station_id) {
+          console.log('what');
           station_id = match.match.station_id;
           get_method = 'PUT';
 
-          if(!station) {
+         
+        }
+         if(!station || finished) {
             get_method = 'DELETE';
           }
-        }
+
+        console.log(get_method);
 
         $http.post("/query/postMatchStation/", {
           data: {
