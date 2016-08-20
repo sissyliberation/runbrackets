@@ -6676,6 +6676,13 @@ input[type="checkbox"],
   background-color: #ecf0f1;
 }
 */
+#activeTournament #settings {
+  font-size: 0.5em;
+  padding: 0.5em;
+  color: #bdc3c7 !important; }
+  #activeTournament #settings:hover {
+    text-decoration: none; }
+
 /* Sticky footer styles
 -------------------------------------------------- */
 html {

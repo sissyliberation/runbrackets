@@ -13,7 +13,9 @@
     $scope.currentMatch = {};
 
     $scope.participants = {};
-    $scope.stations = {};
+    $scope.stations = [];
+
+    // $scope.stations.push({'name':'blah blah'});
 
     $scope.is_loading = false;
     $scope.ready = false;
@@ -201,7 +203,7 @@
             $scope.participants[participants[i].participant.id] = participants[i].participant.display_name || participants[i].participant.username || participants[i].participant.name;
           }
 
-          $scope.getTournamentMatches(reload);
+          $scope.getTournamentMatches(true);
         }, 
         function(data, status) {
           console.log(data);
@@ -246,7 +248,7 @@
             };
 
             if (value.match.attachment_count) {
-             $scope.getMatchStation(value);
+              $scope.getMatchStation(value);
             }
 
             // sort matches
@@ -344,6 +346,14 @@
             if(match_data.attachments[i].match_attachment.description.substring(0,8) == 'station ') {
               match.match.station = match_data.attachments[i].match_attachment.description.substring(8);
               match.match.station_id = match_data.attachments[i].match_attachment.id;
+
+              if (!(match.match.station in $scope.stations)) {
+                $scope.stations.push({
+                  'id': match.match.station_id,
+                  'name': match.match.station,
+                  'match': match.match.id
+                });
+              }
             }
           }
         }, 
@@ -353,6 +363,11 @@
     };
 
     $scope.updateMatchStation = function(match, station) {
+
+      console.log('--');
+
+      console.log(match);
+      console.match(station);
 
       if ($scope.is_organizer) {
         var match_id = match.match.id;

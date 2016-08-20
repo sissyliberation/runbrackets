@@ -71,12 +71,18 @@
 
 <div id="activeTournament" layout="column" flex ng-if="!is_loading && confirmed && (activeTournament || !is_organizer)">
 
+
   <div>
     <h1 class="text-center">
       <a href="{{activeTournament.tournament.full_challonge_url}}" target="_blank">
         {{activeTournament.tournament.name}}
       </a>
+      <a ng-init="hover=false;" class="pull-right fa fa-gear" id="settings" ng-class="{'fa-spin':hover}" type="button" data-toggle="modal" data-target="#stationManager" ng-mouseover="hover = true; " ng-mouseleave="hover = false;">
+        <i aria-hidden="true"></i>
+      </a>
     </h1>
+
+
     <div class="progress">
       <div class="determinate" style="width: {{ activeTournament.tournament.progress_meter }}%"></div>
     </div>
@@ -140,7 +146,16 @@
               {{ 'Loser of ' + match_ids[match.match.player2_prereq_match_id].id }}
             </span>
           <td ng-hide="credentials.hide_stations"> 
-            <input ng-if="is_organizer" ng-click="$event.stopPropagation()" placeholder="station" class="form-control input-sm station" ng-model="match.match.station" ng-change="updateMatchStation(match, match.match.station)" ng-model-options="{debounce:300}"/>
+            <!-- <input ng-if="is_organizer" ng-click="$event.stopPropagation()" placeholder="station" class="form-control input-sm station" ng-model="match.match.station" ng-change="updateMatchStation(match, match.match.station)" ng-model-options="{debounce:300}"/> -->
+
+
+            <select  data-ng-init="match.match.station" ng-model="match.match.station" class="form-control station" ng-click="$event.stopPropagation()" ng-change="updateMatchStation(match, match.match.station)">
+              <option class="form-control"  ng-repeat="station in stations" value="{{station.name}}" 
+              ng-if="station.match == match.match.id || !station.id"
+              >{{station.name}}</option>
+            </select>
+
+
             <span ng-if="!is_organizer" class="station">
               {{match.match.station}}
             </span>
@@ -152,31 +167,8 @@
 
 </div>
 
-<div class="modal fade" tabindex="-1" role="dialog">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title">Modal title</h4>
-      </div>
-      <div class="modal-body">
-        <p>One fine body&hellip;</p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
-      </div>
-    </div><!-- /.modal-content -->
-  </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
 
-
-<!-- Button trigger modal -->
-<!-- <button type="button" class="btn btn-primary btn-lg">
-  Launch demo modal
-</button> -->
-
-<!-- Modal -->
+<!-- EDIT MATCH MODAL -->
 <div class="modal fade" id="matchModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -221,3 +213,34 @@
     </div>
   </div>
 </div>
+
+
+<!-- Modal -->
+<div id="stationManager" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Station Manager</h4>
+      </div>
+      <div class="modal-body">
+        <div ng-repeat="station in stations">
+          {{station}}
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+
+
+
+
+
