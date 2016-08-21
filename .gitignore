@@ -16,9 +16,11 @@ npm-debug.log
 .sass-cache
 *.css.map
 
+### CSS - Rebuilt from SCSS
+css
+
 ### Bower Components
 bower_components
-
 
 ### Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio and Webstorm
 *.iml
