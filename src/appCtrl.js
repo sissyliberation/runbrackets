@@ -123,33 +123,25 @@
     };
 
     $scope.addStation = function() {
-
       $scope.stations.push({'name': $scope.newStationName});
       localStorageService.set('station-' + $scope.newStationName, $scope.newStationName);
       $scope.newStationName = '';
-      // $scope.$apply();
-
     };
-
-
 
     $scope.deleteStation = function(station_name) {
 
       localStorageService.remove('station-' + station_name);
-
       var station_index;
 
       for(var i = 0; i < $scope.stations.length; ++i) {
         if ($scope.stations[i].name == station_name) {
           station_index = i;
         }
-
       }
 
       if (station_index) {
         $scope.stations.splice(station_index, 1);
       }
-
     };
 
     $scope.getActiveTournaments = function(filter) {
@@ -321,13 +313,14 @@
 
       if($scope.currentMatch.match.winner_id) {
 
-            angular.forEach($scope.stations, function(station) {
-              if (station.name == $scope.currentMatch.match.station) {
-                delete station.id;
-                delete station.match;
-              }
-            });
+        angular.forEach($scope.stations, function(station) {
+          if (station.name == $scope.currentMatch.match.station) {
+            $scope.updateMatchStation($scope.currentMatch, '', true);
+            delete station.id;
+            delete station.match;
           }
+        });
+      }
 
       $http.post("/query/postMatchResults/", {
         data: {
@@ -343,10 +336,7 @@
       .then(
         function(response) {
 
-          var finished = $scope.currentMatch.match.winner_id ? true : false;
-
           $scope.getStoredStations();
-          
           $scope.getTournamentMatches(false);
 
           $('#matchModal').modal('hide');
@@ -396,25 +386,24 @@
 
           for(var i = 0; i < match_data.attachment_count; ++i) {
             if(match_data.attachments[i].match_attachment.description.substring(0,8) == 'station-') {
+
               match.match.station = match_data.attachments[i].match_attachment.description.substring(8);
               match.match.station_id = match_data.attachments[i].match_attachment.id;
 
-
-
-              // if (!(match.match.station in $scope.stations)) {
-              //   $scope.stations.push({
-              //     'id': match.match.station_id,
-              //     'name': match.match.station,
-              //     'match': match.match.id
-              //   });
-              // }
+              var station_added = false;
 
               angular.forEach($scope.stations, function(station) {
                 if (station.name == match.match.station) {
                   station.id = match.match.station_id;
                   station.match = match.match.id;
+                  station_added = true;
                 }
               });
+
+              // delete match attachment if for some reason it's not on the station manager
+              if (!station_added) {
+                $scope.updateMatchStation(match, '', true);
+              }
 
             }
           }
@@ -426,34 +415,24 @@
 
     $scope.updateMatchStation = function(match, station, finished) {
 
-      // console.log('--');
-
-      // console.log(match);
-      // console.log(station);
-
       if ($scope.is_organizer) {
         var match_id = match.match.id;
         var station_id = '';
         var get_method = 'POST';
 
-
         if(match.match.station_id) {
-          console.log('what');
           station_id = match.match.station_id;
           get_method = 'PUT';
-
-         
         }
-        if(!station || finished) {
+        if(finished) {
 
-          angular.forEach($scope.stations, function(station) {
-            if (station.name == $scope.currentMatch.match.station) {
-              delete station.id;
-              delete station.match;
+          angular.forEach($scope.stations, function(s) {
+            if (s.name == match.match.station) {
+              delete s.id;
+              delete s.match;
             }
           });
           
-
           get_method = 'DELETE';
         }
 
@@ -516,25 +495,15 @@
       }
     };
 
-
     // get saved stations
-    var lsKeys = localStorageService.keys();
-
-    for(var i = 0; i < lsKeys.length; ++i) {
-      console.log(lsKeys[i]);
-      if (lsKeys[i].substring(0,8) == 'station-') {
-        $scope.stations.push({'name':lsKeys[i].substring(8)});
-
-      }
-    }
-
     $scope.getStoredStations = function() {
       var lsKeys = localStorageService.keys();
       $scope.stations = [];
 
       for(var i = 0; i < lsKeys.length; ++i) {
-        console.log(lsKeys[i]);
+        
         if (lsKeys[i].substring(0,8) == 'station-') {
+        
           $scope.stations.push({'name':lsKeys[i].substring(8)});
 
         }
@@ -543,10 +512,9 @@
     };
 
     // init
+    $scope.getStoredStations();
     $scope.getCredentials(false, 'organizer');
     $scope.getCredentials(false, 'participant');
     
-
-
   });
 }());
