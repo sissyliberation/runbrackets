@@ -4,26 +4,17 @@
   var app = angular.module('app');
   app.controller('appCtrl', function($scope, $http, localStorageService, $interval) {
 
-
     $scope.Math = window.Math;
 
     $scope.activeTournament = '';
     $scope.matches = '';
     $scope.match_ids = {};
     $scope.currentMatch = {};
-
     $scope.participants = {};
     $scope.newStationName = '';
-
     $scope.stations = [];
-
-
-
-    // $scope.
-
     $scope.is_loading = false;
     $scope.ready = false;
-
     $scope.is_organizer = false;
 
     $scope.tournamentFilters = [{
@@ -53,7 +44,6 @@
       'hide_stations': localStorageService.get('hide_stations'),
 
     };
-
 
     $scope.getCredentials = function(clicked, type) {
 
@@ -380,7 +370,6 @@
           }
 
           var match_data = response.data.match;
-
           var station = '';
           var id = '';
 
