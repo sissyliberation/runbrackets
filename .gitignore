@@ -16,9 +16,6 @@ npm-debug.log
 .sass-cache
 *.css.map
 
-### CSS - Rebuilt from SCSS
-css
-
 ### Bower Components
 bower_components
 
