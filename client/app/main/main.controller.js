@@ -5,6 +5,8 @@ angular.module('runbracketsApp')
 
     $scope.is_loading = true;
 
+    console.log(Auth.isLoggedIn());
+
     if(Auth.isLoggedIn()) {
 
       $scope.currentUser = Auth.getCurrentUser();

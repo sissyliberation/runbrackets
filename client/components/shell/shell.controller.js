@@ -3,6 +3,8 @@
 angular.module('runbracketsApp')
   .controller('ShellCtrl', function ($mdSidenav, $mdDialog, $scope, $location, Auth) {
 
+    $scope.isLoggedIn = Auth.isLoggedIn;
+
     $scope.logout = function() {
       Auth.logout();
       $location.path('/login');
