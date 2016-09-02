@@ -1,0 +1,44 @@
+div(ng-controller='ShellCtrl').main-shell
+
+  md-toolbar
+    .md-toolbar-tools
+
+      md-button( ui-sref='main')
+        span runbrackets.com
+
+      md-button( ng-click='changeTheme()' aria-label="Change Theme")
+        span(ng-if="theme === 'night'") Night Mode
+        span(ng-if="theme === 'light'") Light Mode
+
+      span(flex='')
+
+      md-button(hide-sm hide-xs ng-show='!isLoggedIn()' ui-sref='login')
+        span Login
+
+      md-button(hide-sm hide-xs ng-show='!isLoggedIn()' ui-sref='signup')
+        span Register
+
+      md-button(hide-sm hide-xs ng-show='isLoggedIn()' ui-sref='account')
+        span Account
+
+      md-button(hide-sm hide-xs ng-show='isLoggedIn()' ng-click='logout()')
+        span Logout
+
+      md-menu(hide-gt-sm)
+        md-button.md-icon-button(ng-click='openMenu($mdOpenMenu, $event)')
+          md-icon(md-menu-origin='', md-svg-icon='navigation:menu')
+        md-menu-content(width='3')
+          md-menu-item(ng-show='!isLoggedIn()')
+            md-button(ui-sref="login")
+              span Login
+          md-menu-item(ng-show='!isLoggedIn()')
+            md-button(ui-sref="signup")
+              span Register
+          md-menu-item(ng-show='isLoggedIn()')
+            md-button(ui-sref="account")
+              span Account
+          md-menu-item(ng-show='isLoggedIn()')
+            md-button( ng-click='logout()')
+              span Logout
+
+md-progress-linear(md-mode="indeterminate" ng-if="is_loading")

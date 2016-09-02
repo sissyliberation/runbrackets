@@ -24,3 +24,12 @@ bower_components
 
 ## Directory-based project format:
 .idea/
+
+
+public
+.tmp
+.sass-cache
+.idea
+client/bower_components
+dist
+/server/config/local.env.js

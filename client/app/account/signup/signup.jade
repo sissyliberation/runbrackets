@@ -1,0 +1,33 @@
+div(ng-include='"components/shell/shell.html"')
+
+md-content.md-padding(flex)
+  md-card.register-card
+    md-card-content
+      h2.md-title Register
+
+      form(name='form', ng-submit='register(form)', novalidate='')
+        md-input-container
+          label Email
+          input(required='', type='email', name='email', ng-model='user.email')
+          div(ng-messages='form.email.$error')
+            div(ng-message='required') This is required.
+        md-input-container
+          label Password
+          input(required='', type='password', name='password', ng-model='user.password')
+          div(ng-messages='form.password.$error')
+            div(ng-message='required') This is required.
+        md-input-container
+          label Api Key
+          input(required='', type='text', name='text', ng-model='user.api_key')
+          div(ng-messages='form.text.$error')
+            div(ng-message='required') This is required.
+        md-input-container
+          label Subdomain (optional)
+          input( type='text', name='text', ng-model='user.subdomain')
+
+
+        div(layout="row" layout-align="center center")
+          md-button.md-primary.md-raised(type='submit') Register
+          
+  .love-message
+    md-button.md-raised.md-accent(flex='', type='submit', href='/login') Login

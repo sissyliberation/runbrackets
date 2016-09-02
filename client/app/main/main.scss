@@ -1,0 +1,32 @@
+.text-center {
+  text-align: center !important;
+}
+
+a {
+  color: $accent;
+}
+
+.bold {
+  font-weight: bold;
+  color: #000;
+}
+
+#tournaments {
+  .tournament {
+    margin-left: 10px;
+    margin-right: 10px;
+    &:hover {
+      cursor: pointer;
+      background: $superlight;
+    }
+  }
+}
+
+#tournaments.md-night-theme {
+  .tournament {
+    &:hover {
+      cursor: pointer;
+      background: $dark;
+    }
+  }
+}

@@ -1,0 +1,102 @@
+div(ng-include='"components/shell/shell.html"')
+
+md-content.md-padding#bracketView(layout="column" flex layout-align="start ")
+  
+  md-tabs(md-dynamic-height md-border-bottom)
+    md-tab(label="Main View")
+
+      h1.text-center
+        span(ng-if="subdomain") {{ currentTournament.tournament.subdomain }} / 
+        | {{ currentTournament.tournament.name }}
+
+      div(style="width: 100%;" layout="row" layout-align="space-between start" ng-show="currentTournament")
+        md-checkbox(ng-model="hide_completed" ng-change="hideCompletedMatches(hide_completed)") Hide Completed?
+        md-checkbox(ng-model="hide_stations" ng-change="hideStations(hide_stations)") Hide Stations?
+
+      md-progress-linear(md-mode="determinate" ng-value="currentTournament.tournament.progress_meter")
+
+      table.table.bracket
+        thead
+          tr.header
+            th(style="width:20%;") Match (round)
+            th Player 1
+            th Player 2
+            th(style="width: 20%;" ng-hide="hide_stations") Station
+                  
+        tbody
+          tr.line(ng-repeat="match in matches | orderBy:['match.order','match.suggested_play_order']" ng-class="{ 'complete': match.match.order == 0, 'ongoing': match.match.order == 1, 'pending': match.match.order == 2, 'notready': match.match.order == 3}" ng-hide="hide_completed && match.match.order == 0" ng-click="editMatch(match)"  )
+            td {{match.match.identifier}} ({{ determineRound(match.match.round) }}) {{match.match.station}}
+            td(ng-class="{'bold':match.match.winner_id && match.match.winner_id == match.match.player1_id}")
+              span.player(ng-if="participants[match.match.player1_id]")
+                {{ participants[match.match.player1_id] }}
+              span(ng-if="!participants[match.match.player1_id] && Math.abs(match.match.round) >= Math.abs(match_ids[match.match.player1_prereq_match_id].round)")
+                {{ 'Winner of ' + match_ids[match.match.player1_prereq_match_id].id }}
+              span(ng-if="!participants[match.match.player1_id] && Math.abs(match.match.round) < Math.abs(match_ids[match.match.player1_prereq_match_id].round)")
+                {{ 'Loser of ' + match_ids[match.match.player1_prereq_match_id].id }}
+            td(ng-class="{'bold':match.match.winner_id && match.match.winner_id == match.match.player2_id}")
+              span.player(ng-if="participants[match.match.player2_id]")
+                {{ participants[match.match.player2_id] }}
+              span(ng-if="!participants[match.match.player2_id] && Math.abs(match.match.round) >= Math.abs(match_ids[match.match.player2_prereq_match_id].round)")
+                {{ 'Winner of ' + match_ids[match.match.player2_prereq_match_id].id }}
+              span(ng-if="!participants[match.match.player2_id] && Math.abs(match.match.round) < Math.abs(match_ids[match.match.player2_prereq_match_id].round)")
+                {{ 'Loser of ' + match_ids[match.match.player2_prereq_match_id].id }} 
+
+            td(ng-hide="hide_stations")
+              md-select.station.text-center(ng-if="!is_loading && own_tournament && (match.match.order == 1 || match.match.order == 2)" ng-model="match.match.station" ng-change="updateMatchStation(match, match.match.station)" aria-label="{{match.match.round}} station")
+
+                md-option(ng-repeat="station in stations | orderBy: ['name.length','name']" ng-value="station.name" ng-if="station.match == match.match.id || !station.id") {{station.name}}
+
+              .text-center(ng-if="own_tournament && match.match.order != 1 && match.match.order != 2") - 
+
+              .text-center(ng-if="!own_tournament") {{match.match.station}}
+
+      div(style="visibility: hidden")
+        .md-dialog-container#matchDialog
+          md-dialog(layout-padding)
+            md-dialog-content
+              h2.md-title Edit Match {{currentMatch.match.identifier}}
+              .text-center(ng-if="(!currentMatch.match.underway_at && !currentMatch.match.scores_csv)")
+                md-button(ng-click="postMatchResults()") Start Match
+              .text-center(ng-if="currentMatch.match.underway_at || currentMatch.match.scores_csv")
+                h3 Select Winner
+                div(layout="row" layout-align="center center")
+                  md-button.md-raised(ng-class="{'md-primary': currentMatch.match.winner_id == currentMatch.match.player1_id}" ng-click="currentMatch.match.winner_id=currentMatch.match.player1_id") {{participants[currentMatch.match.player1_id]}}
+                  md-button.md-raised(ng-class="{'md-primary': currentMatch.match.winner_id == currentMatch.match.player2_id}" ng-click="currentMatch.match.winner_id=currentMatch.match.player2_id") {{participants[currentMatch.match.player2_id]}}
+
+                div(layout="column" layout-align="center center")
+                  md-input-container
+                    label {{participants[currentMatch.match.player1_id]}}'s score
+                    input(ng-model="currentMatch.match.player1_score"  min="0"  type="number" aria-describedby="{{participants[currentMatch.match.player1_id]}}'s score")
+
+                  md-input-container
+                    label {{participants[currentMatch.match.player2_id]}}'s score
+                    input(ng-model="currentMatch.match.player2_score"  min="0"  type="number" aria-describedby="{{participants[currentMatch.match.player2_id]}}'s score")
+
+                .text-center
+                  md-button.md-raised.md-primary(ng-click="postMatchResults()") Save
+
+
+    md-tab(label="Station Manager" ng-if="own_tournament")
+      table.table
+        thead
+          tr.header
+            th Station Name
+            th Match ID
+            th(style="width: 20%; text-align:right;" ng-hide="hide_stations") Delete
+        tbody
+          tr(ng-repeat="station in stations | orderBy: ['name.length','name']" ng-class="{'pending': station.id}")
+            td {{station.name}}
+            td {{station.id}}
+            td(style="text-align:right;")
+              md-icon(md-svg-icon='navigation:close' ng-click="deleteStation(station.name);")
+
+      div(layout="row" layout-align="center center")
+        form(ng-submit="addStation(new_station_name);new_station_name = '';")
+          md-input-container.text-center
+            label Station Name
+            input(ng-model="new_station_name" aria-label="Add Match Station")
+            md-button.md-primary.md-raised(type="submit" ng-disabled="!new_station_name") Add Station
+
+    md-tab(label="Bracket View")
+      div(style="overflow:scroll;")
+        img(src="{{currentTournament.tournament.live_image_url}}")
