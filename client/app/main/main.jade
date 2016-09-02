@@ -8,7 +8,7 @@ div(ng-include='"components/shell/shell.html"')
 //-       h3 {{thing.name}}
 
 
-md-content.md-padding(layout="column" flex layout-align="start center" ng-if="logged_in")
+md-content.md-padding(layout="column" flex layout-align="start center" ng-if="Auth.isLoggedIn()")
   h1 Choose Tournament
 
   md-checkbox(ng-if="currentUser.subdomain" ng-model="use.subdomain" ng-change  ="getTournaments()" aria-label="Use Subdomain") Use {{currentUser.subdomain}}?
@@ -35,7 +35,7 @@ md-content.md-padding(layout="column" flex layout-align="start center" ng-if="lo
 
   h3(ng-if="!is_loading&& tournaments.length == 0" ng-cloak) No tournaments!
 
-md-content.md-padding(flex ng-if="!logged_in" layout="column" layout-align="start center")
+md-content.md-padding(flex ng-if="!Auth.isLoggedIn()" layout="column" layout-align="start center")
   h1 Tournaments should run smoothly!
 
   h2 Participant? Enter Challonge URL
