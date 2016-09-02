@@ -41,7 +41,7 @@ md-content.md-padding#bracketView(layout="column" flex layout-align="start ")
               span(ng-if="!participants[match.match.player2_id] && Math.abs(match.match.round) < Math.abs(match_ids[match.match.player2_prereq_match_id].round)")
                 {{ 'Loser of ' + match_ids[match.match.player2_prereq_match_id].id }} 
 
-            td(ng-hide="hide_stations")
+            td(ng-hide="hide_stations" ng-click="$event.stopPropagation();")
               md-select.station.text-center(ng-if="!is_loading && own_tournament && (match.match.order == 1 || match.match.order == 2)" ng-model="match.match.station" ng-change="updateMatchStation(match, match.match.station)" aria-label="{{match.match.round}} station")
 
                 md-option(ng-repeat="station in stations | orderBy: ['name.length','name']" ng-value="station.name" ng-if="station.match == match.match.id || !station.id") {{station.name}}
@@ -81,12 +81,10 @@ md-content.md-padding#bracketView(layout="column" flex layout-align="start ")
         thead
           tr.header
             th Station Name
-            th Match ID
             th(style="width: 20%; text-align:right;" ng-hide="hide_stations") Delete
         tbody
           tr(ng-repeat="station in stations | orderBy: ['name.length','name']" ng-class="{'pending': station.id}")
             td {{station.name}}
-            td {{station.id}}
             td(style="text-align:right;")
               md-icon(md-svg-icon='navigation:close' ng-click="deleteStation(station.name);")
 

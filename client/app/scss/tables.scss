@@ -99,41 +99,41 @@
 
 }
 
-// #bracketView.md-night-theme {
+#bracketView.md-night-theme {
 
-//   .header {
-//     color: #fff;
-//   }
+  .header {
+    color: #fff;
+  }
 
-//   .complete {
-//     background: $green-dark;
+  .complete {
+    background: $green-dark;
 
-//     &:hover {
-//       background: $green;
-//     }
-//   }
+    &:hover {
+      background: $green;
+    }
+  }
 
-//   .ongoing {
-//     background: $blue-dark;
-//     &:hover {
-//       background: $blue;
-//     }
-//   }
+  .ongoing {
+    background: $blue-dark;
+    &:hover {
+      background: $blue;
+    }
+  }
 
-//   .pending {
-//     background: darken($superlight, 10%);
-//     &:hover {
-//       background: $superlight;
-//     }
-//   }
+  .pending {
+    background: darken($superlight, 10%);
+    &:hover {
+      background: $superlight;
+    }
+  }
 
-//   .notready {
-//     cursor: not-allowed;
+  .notready {
+    cursor: not-allowed;
     
-//     &:hover{
-//       background: rgba(255,212,220,0.87);
-//     }
-//   }
+    &:hover{
+      background: rgba(255,212,220,0.87);
+    }
+  }
 
-// }
+}
 
