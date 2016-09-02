@@ -1,17 +1,20 @@
-# Challonge TO
+# runbrackets.com
 
-Challonge TO is a web app designed to help tournament organizers run their Challonge brackets more smoothly.
+[runbrackets.com](runbrackets.com) is a web app designed to help tournament organizers run their Challonge brackets more smoothly.
 Inspired by Challonge Match Display.
+
+Formerly named (ChallongeTO)
 
 
 ## Getting Started
 
-You'll need to grab your Challonge API Key. 
+If you're a TO, you 'll need to grab your Challonge API Key. 
 Don't have one? Head [here](https://challonge.com/settings/developer).
 
 Create your bracket on Challonge and add participants.
-Then, head [here](http://challonge-to.herokuapp.com/#/). You're all set.
+Then, head [here](http://www.runbrackets.com/signup). You're all set.
 
+If you're just a participant, just grab a Challonge URL, like challonge.com/letstrythisout, and you're good. 
 
 ### Prerequisities
 
@@ -24,36 +27,37 @@ You can run this locally, and are welcome to make changes.
 Fork this repository and go navigate to it.
 
 ```
-git clone https://github.com/novacourtois/challongeTO && cd challongeTO
+git clone https://github.com/novacourtois/runbrackets && cd $_
 ```
 
 Install all the dependencies.
 
 ```
-npm install
+npm install && bower install
 ```
 
-Add your Challonge API Key to the server.js file.
-Mine is an environment variable in Heroku. You can add yours on line 13.
+Add your Challonge API Key to the /server/app.js file.
+Mine is an environment variable in Heroku. You can add yours on line 10.
 
 ```
-var CHALLONGE_API_KEY = process.env.CHALLONGE_API_KEY || 'INSERT API KEY HERE';
+process.env.CHALLONGE_API_KEY = process.env.CHALLONGE_API_KEY || 'INSERT API KEY HERE';
 ```
 
 Get the server up.
 
 ```
-node server.js
+grunt serve
 ```
 
-Head on over to http://localhost:8080/#/ to see your local copy.
+Head on over to http://localhost:9000/ to see your local copy.
 
 ## Built With
 
 * AngularJS
 * Node.js
+* MongoDB
 * Challonge API
-* Bootstrap
+* Angular Material
 * SCSS
 * Heroku
 
