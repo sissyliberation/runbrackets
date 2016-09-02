@@ -42,5 +42,5 @@ md-content.md-padding(flex ng-if="!logged_in" layout="column" layout-align="star
   md-input-container
     label Challonge URL
     input(ng-model="participant_url" type="text")
-  md-button.md-raised.md-primary Let's Go!
+  md-button.md-raised.md-primary(ng-click="parse_url(participant_url)") Let's Go!
 

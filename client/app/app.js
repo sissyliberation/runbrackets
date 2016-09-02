@@ -131,10 +131,6 @@ angular.module('runbracketsApp', [
       // console.log($rootScope.theme);
     };
 
-    $rootScope.isLoggedIn = Auth.isLoggedIn;
-    $rootScope.isAdmin = Auth.isAdmin;
-    $rootScope.getCurrentUser = Auth.getCurrentUser;
-
     $rootScope.$on('$stateChangeStart', function (event, next) {
       Auth.isLoggedInAsync(function(loggedIn) {
         $rootScope.logged_in = loggedIn;

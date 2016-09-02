@@ -1,10 +1,11 @@
 // 'use strict';
 
 angular.module('runbracketsApp')
-  .controller('MainCtrl', function ($scope, $http, Auth) {
+  .controller('MainCtrl', function ($scope, $http, Auth, $state) {
 
     $scope.is_loading = true;
-    if($scope.logged_in) {
+
+    if(Auth.isLoggedIn()) {
 
       $scope.currentUser = Auth.getCurrentUser();
 
@@ -57,6 +58,46 @@ angular.module('runbracketsApp')
 
     }
     else {
+
+      $scope.parse_url = function(url) {
+
+        var participant_url = url;
+        console.log(participant_url);
+
+        var n = participant_url.search("://");
+        if (n) {
+          participant_url = participant_url.substring(n+3);
+        }
+
+        var split_slash = participant_url.split('/');
+        var tournament_url = split_slash[split_slash.length - 1];
+
+        var split_dot = participant_url.split('.');
+        var subdomain;
+
+        if (split_dot.length >2) {
+          subdomain = split_dot[0];
+        }
+        else {
+          subdomain = '';
+        }
+
+        var temp_subdomain;
+        var temp_url;
+
+        if(subdomain) {
+          temp_subdomain = subdomain;
+          temp_url = tournament_url;
+        }
+        else {
+          temp_subdomain = tournament_url;
+        }
+
+        $state.go('bracket', { subdomain: temp_subdomain, url: temp_url });
+
+      };
+
+
       $scope.is_loading = false;
     }
 
