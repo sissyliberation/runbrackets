@@ -12,6 +12,9 @@ div(ng-controller='ShellCtrl').main-shell
 
       span(flex='')
 
+      md-button(hide-sm hide-xs ui-sref='about')
+        span About
+
       md-button(hide-sm hide-xs ng-show='!isLoggedIn()' ui-sref='login')
         span Login
 
@@ -28,6 +31,9 @@ div(ng-controller='ShellCtrl').main-shell
         md-button.md-icon-button(ng-click='openMenu($mdOpenMenu, $event)')
           md-icon(md-menu-origin='', md-svg-icon='navigation:menu')
         md-menu-content(width='3')
+          md-menu-item
+            md-button(ui-sref="about")
+              span About
           md-menu-item(ng-show='!isLoggedIn()')
             md-button(ui-sref="login")
               span Login
