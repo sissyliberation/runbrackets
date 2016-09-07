@@ -3,6 +3,8 @@
 angular.module('runbracketsApp')
   .controller('MainCtrl', function ($scope, $http, Auth, $state) {
 
+    $scope.isLoggedIn = Auth.isLoggedIn;
+
     $scope.is_loading = true;
 
     if(Auth.isLoggedIn()) {
