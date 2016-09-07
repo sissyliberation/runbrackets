@@ -9,6 +9,8 @@ angular.module('runbracketsApp')
    		$scope.subdomain = $stateParams.subdomain;
    	}
 
+    $scope.isLoggedIn = Auth.isLoggedIn;
+
     $scope.Math = window.Math;
 
    	$scope.currentTournament = '';
@@ -69,7 +71,7 @@ angular.module('runbracketsApp')
       // turning on attachments will determine this
       // it's also necessary for managing stations so it works out
 
-      if(Auth.isLoggedIn()) {
+      if($scope.isLoggedIn()) {
         params["api_key"] = Auth.getCurrentUser().api_key;
       }
 
