@@ -3,6 +3,10 @@
 angular.module('runbracketsApp')
   .controller('MainCtrl', function ($scope, $http, Auth, $state) {
 
+    if ($state.params.previousState) {
+      location.reload();
+    }
+
     $scope.isLoggedIn = Auth.isLoggedIn;
 
     $scope.is_loading = true;

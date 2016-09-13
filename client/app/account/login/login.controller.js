@@ -14,10 +14,7 @@ angular.module('runbracketsApp')
           password: $scope.user.password
         })
         .then( function() {
-          // Logged in, redirect to home
-          // $location.path('/');
-          $state.go('main');
-          location.reload();
+          $state.go('main', { previousState : { name : $state.current.name } }, {} );
         })
         .catch( function(err) {
           $scope.errors.other = err.message;
