@@ -1,0 +1,20 @@
+.alert {
+  padding: 1em 1.5em;
+    background-color: #b00020;
+    color: white;
+    position: relative;
+
+    .alert__text {
+
+    }
+
+    .alert__close {
+      color: white;
+      position: absolute;
+      top: .5em;
+      right: .5em;
+      text-decoration: none;
+      display: flex;
+      line-height: 1;
+    }
+}
