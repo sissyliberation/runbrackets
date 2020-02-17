@@ -1,7 +1,7 @@
 {
   "name": "runbrackets",
   "version": "0.0.0",
-  "main": "server/app.js",
+  "main": "index.js",
   "dependencies": {
     "chalk": "^3.0.0",
     "express": "^4.17.1",
@@ -11,5 +11,11 @@
   "scripts": {
     "start": "node index.js"
   },
-  "private": true
+  "engines": {
+    "node": "12.13.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/novacourtois/runbrackets"
+  }
 }
