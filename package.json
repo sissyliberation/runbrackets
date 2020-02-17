@@ -17,7 +17,7 @@
     "lodash": "~3.10.1",
     "method-override": "~1.0.0",
     "mongoose": "~4.0.3",
-    "morgan": "~1.0.0",
+    "morgan": "~1.9.1",
     "passport": "~0.2.0",
     "passport-local": "~0.1.6",
     "request": "^2.74.0",
