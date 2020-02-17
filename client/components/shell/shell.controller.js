@@ -4,6 +4,16 @@ angular.module('runbracketsApp')
   .controller('ShellCtrl', function ($mdSidenav, $mdDialog, $scope, $location, Auth) {
 
     $scope.isLoggedIn = Auth.isLoggedIn;
+    $sccope.showAlert = true;
+
+    $scope.closeAlert = function(event) {
+      event.preventDefault();
+      $scope.showAlert = false;
+    };
+
+    $scope.shouldShowAlert = function() {
+      return $scope.showAlert;
+    }
 
     $scope.logout = function() {
       Auth.logout();

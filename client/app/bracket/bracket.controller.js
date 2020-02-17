@@ -18,10 +18,10 @@ angular.module('runbracketsApp')
    	$scope.match_ids = {};
    	$scope.current_match = {};
    	$scope.participants = {};
-   	$scope.stations = [];
-   	$scope.new_station_name = '';	
+   	// $scope.stations = [];
+   	// $scope.new_station_name = '';
    	$scope.hide_completed = localStorageService.get('hide_completed') || false;
-   	$scope.hide_stations = localStorageService.get('hide_stations') || false;
+   	// $scope.hide_stations = localStorageService.get('hide_stations') || false;
 
    	$scope.is_loading = true;
     $scope.own_tournament = false;
@@ -35,34 +35,34 @@ angular.module('runbracketsApp')
       localStorageService.set('hide_stations', val);
     };
 
-    $scope.addStation = function(val) {
-      $scope.new_station_name = val;
-      $scope.stations.push({'name': $scope.new_station_name});
-      localStorageService.set('station-' + $scope.new_station_name, $scope.new_station_name);
-      $scope.new_station_name = '';
-    };
-
-    $scope.deleteStation = function(station_name) {
-
-      localStorageService.remove('station-' + station_name);
-      var station_index;
-
-      for(var i = 0; i < $scope.stations.length; ++i) {
-        if ($scope.stations[i].name == station_name) {
-          station_index = i;
-        }
-      }
-
-      if (station_index) {
-        $scope.stations.splice(station_index, 1);
-      }
-    };
+    // $scope.addStation = function(val) {
+    //   $scope.new_station_name = val;
+    //   $scope.stations.push({'name': $scope.new_station_name});
+    //   localStorageService.set('station-' + $scope.new_station_name, $scope.new_station_name);
+    //   $scope.new_station_name = '';
+    // };
+    //
+    // $scope.deleteStation = function(station_name) {
+    //
+    //   localStorageService.remove('station-' + station_name);
+    //   var station_index;
+    //
+    //   for(var i = 0; i < $scope.stations.length; ++i) {
+    //     if ($scope.stations[i].name == station_name) {
+    //       station_index = i;
+    //     }
+    //   }
+    //
+    //   if (station_index) {
+    //     $scope.stations.splice(station_index, 1);
+    //   }
+    // };
 
     $scope.activateTournamentAttachments = function() {
 
       var params = {};
       params["tournament_url"] = $scope.tournament_url;
-      
+
       if($scope.subdomain) {
         params["subdomain"] = $scope.subdomain;
       }
@@ -119,7 +119,7 @@ angular.module('runbracketsApp')
       var params = {};
 
       params["tournament_url"] = $scope.tournament_url;
-      
+
       if($scope.subdomain) {
         params["subdomain"] = $scope.subdomain;
       }
@@ -130,7 +130,7 @@ angular.module('runbracketsApp')
       .then(
         function(data) {
           $scope.currentTournament = data.data;
-        }, 
+        },
         function(data) {
           console.log(data);
       });
@@ -142,7 +142,7 @@ angular.module('runbracketsApp')
 
       var params = {};
       params["tournament_url"] = $scope.tournament_url;
-      
+
       if($scope.subdomain) {
         params["subdomain"] = $scope.subdomain;
       }
@@ -163,7 +163,7 @@ angular.module('runbracketsApp')
           }
 
           $scope.getTournamentMatches(true);
-        }, 
+        },
         function(data) {
           console.log(data);
       });
@@ -171,11 +171,11 @@ angular.module('runbracketsApp')
 
     $scope.getTournamentMatches = function(reload) {
       $scope.is_loading = true;
-      
+
 
       var params = {};
       params["tournament_url"] = $scope.tournament_url;
-      
+
       if($scope.subdomain) {
         params["subdomain"] = $scope.subdomain;
       }
@@ -208,8 +208,8 @@ angular.module('runbracketsApp')
           });
 
           $scope.is_loading = false;
-          
-        }, 
+
+        },
         function(data, status) {
           console.log(data);
       });
@@ -259,8 +259,8 @@ angular.module('runbracketsApp')
       data["api_key"] = Auth.getCurrentUser().api_key;
       data["tournament_url"] = $scope.tournament_url;
       data["match_id"] = $scope.currentMatch.match.id;
-      data["station_id"] = station_id;
-      data["match_station"] = match_station;
+      // data["station_id"] = station_id;
+      // data["match_station"] = match_station;
       data["score"] = score;
       data["winner_id"] = $scope.currentMatch.match.winner_id;
 
@@ -270,7 +270,7 @@ angular.module('runbracketsApp')
       .then(
         function(response) {
 
-          $scope.getStoredStations();
+          // $scope.getStoredStations();
           $scope.getTournamentDetails();
           $scope.getTournamentMatches(true);
 
@@ -278,137 +278,137 @@ angular.module('runbracketsApp')
 
           $mdDialog.hide();
 
-        }, 
+        },
         function(response) {
           console.log(response);
       });
     };
 
-    $scope.getMatchStation = function(match) {
-
-      var params = {};
-      params["tournament_url"] = $scope.tournament_url;
-      
-      if($scope.subdomain) {
-        params["subdomain"] = $scope.subdomain;
-      }
-
-      if($scope.own_tournament) {
-        params["api_key"] = Auth.getCurrentUser().api_key;
-      }
-
-      params["match_id"] = match.match.id;
-
-      $http.get("/api/tournaments/station/", {
-        params: params
-      })
-      .then(
-        function(data) {
-          if (!data.data.match) {
-            return;
-          }
-
-          var match_data = data.data.match;
-          var station = '';
-          var id = '';
-
-          for(var i = 0; i < match_data.attachment_count; ++i) {
-            if(match_data.attachments[i].match_attachment.description.substring(0,8) == 'station-') {
-
-              match.match.station = match_data.attachments[i].match_attachment.description.substring(8);
-              match.match.station_id = match_data.attachments[i].match_attachment.id;
-
-              var station_added = false;
-
-              angular.forEach($scope.stations, function(station) {
-                if (station.name == match.match.station) {
-                  station.id = match.match.station_id;
-                  station.match = match.match.id;
-                  station_added = true;
-                }
-              });
-
-              // delete match attachment if for some reason it's not on the station manager
-              if (!station_added) {
-                $scope.updateMatchStation(match, '', true);
-              }
-
-            }
-          }
-        }, 
-        function(response) {
-          console.log(response);
-      });
-    };
-
-    $scope.updateMatchStation = function(match, station, finished) {
-
-      if ($scope.own_tournament) {
-
-        var match_id = match.match.id;
-        var station_id = '';
-        var get_method = 'POST';
-
-        if(match.match.station_id) {
-          station_id = match.match.station_id;
-          get_method = 'PUT';
-        }
-        
-        if(get_method == 'PUT') {
-            angular.forEach($scope.stations, function(s) {
-            if (s.id == match.match.station_id) {
-              delete s.id;
-              delete s.match;
-            }
-            if (s.name == match.match.station) {
-
-              s.id = match.match.station_id;
-              s.match = match.match.id;
-            }
-          });
-        }
-
-        if(finished) {
-
-          angular.forEach($scope.stations, function(s) {
-            if (s.name == match.match.station) {
-              delete s.id;
-              delete s.match;
-            }
-          });
-
-          get_method = 'DELETE';
-        }
-
-        var data = {};
-
-        if($scope.subdomain) {
-          data["subdomain"] = $scope.subdomain;
-        }
-
-        data["api_key"] = Auth.getCurrentUser().api_key;
-        data["tournament_url"] = $scope.tournament_url;
-        data["match_id"] = match.match.id;
-        data["get_method"] = get_method;
-        data["station_id"] = station_id;
-        data["match_station"] = station;
-
-        $http.post("/api/tournaments/postMatchStation/", {
-          data: data
-        })
-        .then(
-          function(data) {
-
-            if(get_method == 'POST') {
-              $scope.getMatchStation(match);
-            }
-          }, 
-          function(response) {
-            alert('Error, sorry. Working on it');
-        });
-
-      }
-    };
+    // $scope.getMatchStation = function(match) {
+    //
+    //   var params = {};
+    //   params["tournament_url"] = $scope.tournament_url;
+    //
+    //   if($scope.subdomain) {
+    //     params["subdomain"] = $scope.subdomain;
+    //   }
+    //
+    //   if($scope.own_tournament) {
+    //     params["api_key"] = Auth.getCurrentUser().api_key;
+    //   }
+    //
+    //   params["match_id"] = match.match.id;
+    //
+    //   $http.get("/api/tournaments/station/", {
+    //     params: params
+    //   })
+    //   .then(
+    //     function(data) {
+    //       if (!data.data.match) {
+    //         return;
+    //       }
+    //
+    //       var match_data = data.data.match;
+    //       var station = '';
+    //       var id = '';
+    //
+    //       for(var i = 0; i < match_data.attachment_count; ++i) {
+    //         if(match_data.attachments[i].match_attachment.description.substring(0,8) == 'station-') {
+    //
+    //           match.match.station = match_data.attachments[i].match_attachment.description.substring(8);
+    //           match.match.station_id = match_data.attachments[i].match_attachment.id;
+    //
+    //           var station_added = false;
+    //
+    //           angular.forEach($scope.stations, function(station) {
+    //             if (station.name == match.match.station) {
+    //               station.id = match.match.station_id;
+    //               station.match = match.match.id;
+    //               station_added = true;
+    //             }
+    //           });
+    //
+    //           // delete match attachment if for some reason it's not on the station manager
+    //           if (!station_added) {
+    //             $scope.updateMatchStation(match, '', true);
+    //           }
+    //
+    //         }
+    //       }
+    //     },
+    //     function(response) {
+    //       console.log(response);
+    //   });
+    // };
+    //
+    // $scope.updateMatchStation = function(match, station, finished) {
+    //
+    //   if ($scope.own_tournament) {
+    //
+    //     var match_id = match.match.id;
+    //     var station_id = '';
+    //     var get_method = 'POST';
+    //
+    //     if(match.match.station_id) {
+    //       station_id = match.match.station_id;
+    //       get_method = 'PUT';
+    //     }
+    //
+    //     if(get_method == 'PUT') {
+    //         angular.forEach($scope.stations, function(s) {
+    //         if (s.id == match.match.station_id) {
+    //           delete s.id;
+    //           delete s.match;
+    //         }
+    //         if (s.name == match.match.station) {
+    //
+    //           s.id = match.match.station_id;
+    //           s.match = match.match.id;
+    //         }
+    //       });
+    //     }
+    //
+    //     if(finished) {
+    //
+    //       angular.forEach($scope.stations, function(s) {
+    //         if (s.name == match.match.station) {
+    //           delete s.id;
+    //           delete s.match;
+    //         }
+    //       });
+    //
+    //       get_method = 'DELETE';
+    //     }
+    //
+    //     var data = {};
+    //
+    //     if($scope.subdomain) {
+    //       data["subdomain"] = $scope.subdomain;
+    //     }
+    //
+    //     data["api_key"] = Auth.getCurrentUser().api_key;
+    //     data["tournament_url"] = $scope.tournament_url;
+    //     data["match_id"] = match.match.id;
+    //     data["get_method"] = get_method;
+    //     data["station_id"] = station_id;
+    //     data["match_station"] = station;
+    //
+    //     $http.post("/api/tournaments/postMatchStation/", {
+    //       data: data
+    //     })
+    //     .then(
+    //       function(data) {
+    //
+    //         if(get_method == 'POST') {
+    //           $scope.getMatchStation(match);
+    //         }
+    //       },
+    //       function(response) {
+    //         alert('Error, sorry. Working on it');
+    //     });
+    //
+    //   }
+    // };
 
     $scope.determineRound = function(round) {
       var place;
@@ -447,22 +447,22 @@ angular.module('runbracketsApp')
     };
 
     // get saved stations
-    $scope.getStoredStations = function(flag) {
-      var lsKeys = localStorageService.keys();
-      $scope.stations = [];
-
-      for(var i = 0; i < lsKeys.length; ++i) {
-        if (lsKeys[i].substring(0,8) == 'station-') {
-          $scope.stations.push({'name':lsKeys[i].substring(8)});
-        }
-      }
-
-      if(flag) {
-        $scope.activateTournamentAttachments();
-      }
-    };
-
-    $scope.getStoredStations(true);
+    // $scope.getStoredStations = function(flag) {
+    //   var lsKeys = localStorageService.keys();
+    //   $scope.stations = [];
+    //
+    //   for(var i = 0; i < lsKeys.length; ++i) {
+    //     if (lsKeys[i].substring(0,8) == 'station-') {
+    //       $scope.stations.push({'name':lsKeys[i].substring(8)});
+    //     }
+    //   }
+    //
+    //   if(flag) {
+    //     $scope.activateTournamentAttachments();
+    //   }
+    // };
+    //
+    // $scope.getStoredStations(true);
 
 
     // $interval(function () {
@@ -478,15 +478,15 @@ angular.module('runbracketsApp')
     });
   };
 
-      $scope.hide = function() {
-        $mdDialog.hide();
-      };
-      $scope.cancel = function() {
-        $mdDialog.cancel();
-      };
-      $scope.answer = function() {
-        $mdDialog.hide();
-      };
+    $scope.hide = function() {
+      $mdDialog.hide();
+    };
+    
+    $scope.cancel = function() {
+      $mdDialog.cancel();
+    };
 
-
+    $scope.answer = function() {
+      $mdDialog.hide();
+    };
   });
